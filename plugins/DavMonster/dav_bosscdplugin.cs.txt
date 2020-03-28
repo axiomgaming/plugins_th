@@ -1,0 +1,402 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using Turbo.Plugins.Default;
+using SharpDX;
+using SharpDX.Direct2D1;
+
+namespace Turbo.Plugins.DavMonster
+{
+	public class DAV_BossCDPlugin : BasePlugin, IInGameWorldPainter, INewAreaHandler {
+		public float XPos { get; set; }
+		public float YPos { get; set; }
+		public float barH { get; set; }
+		public float barW { get; set; }
+		public string CDformat { get; set; }
+		public IFont SkillFont { get; set; }
+		public IBrush Brush_Ready { get; set; } // Skill ready (cool down = 0)
+		public IBrush Brush_CD { get; set; } // Cooldown in progress
+		public IBrush Brush_NA { get; set; } // Skill not available yet
+		public IBrush Brush_BG { get; set; } // background (for skill in cool down)
+		public Dictionary<DAV_KeyAnime, DAV_BossSkill> BossSkill_List { get; set; } = new Dictionary<DAV_KeyAnime, DAV_BossSkill>(new DAV_KeyAnime.EqualityComparer());
+		public Dictionary<DAV_KeyActor, DAV_BossSkill> BossActor_List { get; set; } = new Dictionary<DAV_KeyActor, DAV_BossSkill>(new DAV_KeyActor.EqualityComparer());
+
+		private bool showDebug { get; set; } = false;
+		private bool BossFlight { get; set; } = false;
+		private DAV_KeyAnime preSkill { get; set; }
+		private DAV_KeyActor thisActor { get; set; }
+		private Dictionary<AnimSnoEnum, double> BossSkill_This { get; set; } = new Dictionary<AnimSnoEnum, double>();
+		private Dictionary<ActorSnoEnum, double> BossActor_This { get; set; } = new Dictionary<ActorSnoEnum, double>();
+
+		public DAV_BossCDPlugin() {
+			Enabled = true;
+		}
+
+		public override void Load(IController hud) {
+			base.Load(hud);
+
+			XPos = Hud.Window.Size.Width * 0.7f;
+			YPos = Hud.Window.Size.Height * 0.5f;
+			barH = Hud.Window.Size.Height * 0.015f;
+			barW = Hud.Window.Size.Width * 0.1f;
+			CDformat = "F0"; // F0, F1 or F2
+			SkillFont = Hud.Render.CreateFont("arial", 7, 255, 255, 255, 255, false, false, 255, 0, 0, 0, true);
+			Brush_Ready = Hud.Render.CreateBrush(240, 128, 255, 0, 0);
+			Brush_CD = Hud.Render.CreateBrush(240, 255, 51, 51, 0);
+			Brush_NA = Hud.Render.CreateBrush(240, 153, 153, 153, 0);
+			Brush_BG = Hud.Render.CreateBrush(240, 255, 255, 255, 0);
+
+			preSkill = new DAV_KeyAnime("", AnimSnoEnum._p7_cos_pet_azmodan_walk);
+			thisActor = new DAV_KeyActor("", ActorSnoEnum._p7_cos_wings_cosmic_bat_01_wdm);
+
+			// Thanks to user evan6944's works
+			// Agnidox
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Agnidox", AnimSnoEnum._demonflyer_mega_firebreath_01), new DAV_BossSkill("Agnidox", "Flame Breath", 1f, 7, "", "> Only used when a player is within 15 yards\n> Procs 4 ticks of thorns @ 100%/tick)"));
+			// Normal Skills
+			BossActor_List.Add(new DAV_KeyActor("Agnidox", ActorSnoEnum._x1_unique_monster_generic_aoe_dot_fire_10foot), new DAV_BossSkill("Agnidox", "Mark of Fire", 1f, 12, "", "> 10-yard radius, lasts 5s"));// tiered CDs, 9s at lower HP; needs further testing
+			//BossActor_List.Add(new DAV_KeyActor("Agnidox", ActorSnoEnum._x1_unique_monster_generic_projectile_fire), new DAV_BossSkill("Agnidox", "Fire Ball", 1f, 4, "", ""));
+			//BossActor_List.Add(new DAV_KeyActor("Agnidox", ActorSnoEnum._grenadier_proj_mortar_inpact), new DAV_BossSkill("Agnidox", "Mortar", 1f, 3, "", ""));
+			//Fire Nova lacks animation and actor
+
+			// Blighter
+			//
+
+			// Bloodmaw
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Bloodmaw", AnimSnoEnum._x1_westmarchbrute_taunt), new DAV_BossSkill("Bloodmaw", "Leap", 1f, 21, "Stun for Krysbins", "> Procs 5 ticks of thorns per pool @ 100%/tick"));
+			// Normal Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Bloodmaw", AnimSnoEnum._x1_westmarchbrute_b_attack_06_in), new DAV_BossSkill("Bloodmaw", "Leaping Strike", 1f, 5));
+
+			// Bone Warlock
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Bone Warlock", AnimSnoEnum._skeletonsummoner_attack_01), new DAV_BossSkill("Bone Warlock", "Arcane Bolt", 1f, 2, "Stun for Krysbins")); //%thorns?
+
+			// Cold Snap
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Cold Snap", AnimSnoEnum._bigred_firebreath_combo_01), new DAV_BossSkill("Cold Snap", "Frozen Nova", 1f, 16, "", "> Procs 1 tick of thorns @ 100%/tick"));
+			// Normal Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Cold Snap", AnimSnoEnum._bigred_charge_01), new DAV_BossSkill("Cold Snap", "Charge", 1f, 6, "", "> Only used when players are beyond 15 yards"));
+ 			//var tmpskill = new DAV_KeyActor("Cold Snap", ActorSnoEnum._x1_monsteraffix_frozenpulse_monster);
+			//BossActor_List.Add(tmpskill, new DAV_BossSkill("Cold Snap", "Frozen Pulse", 0.75f, 10, "", "> Unlocks at 75% HP"));
+			//BossActor_List[tmpskill].AddSecendCD(0.5f, 7);
+			//BossActor_List.Add(new DAV_KeyActor("Cold Snap", ActorSnoEnum._monsteraffix_frozen_iceclusters), new DAV_BossSkill("Cold Snap", "Frozen Storm", 0.5f, 8, "> Unlocks at 50% HP", "> Insignificant thorns effect against this skill"));
+
+			// Crusader King
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Crusader King", AnimSnoEnum._skeletonking_whirlwind_start), new DAV_BossSkill("Crusader King", "Triple Swing", 1f, 20, "Stun for Krysbins", "> Swings 4 times\n> Procs 1 tick of thorns per swing, @ 100%/tick"));
+			// Normal Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Crusader King", AnimSnoEnum._skeletonking_teleport), new DAV_BossSkill("Crusader King", "Teleport", 1f, 9, "Stun to interrupt", ""));
+			BossSkill_List.Add(new DAV_KeyAnime("Crusader King", AnimSnoEnum._skeletonking_cast_summon), new DAV_BossSkill("Crusader King", "Summonning", 1f, 15, "Stun to interrupt", "> Caps at 14 (2 waves)"));
+
+			// Ember
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Ember", AnimSnoEnum._morluspellcaster_attack_aoe_01), new DAV_BossSkill("Ember", "Meteor", 1f, 5, "Stun for Krysbins")); //%thorns?
+			// Normal Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Ember", AnimSnoEnum._morluspellcaster_generic_cast), new DAV_BossSkill("Ember", "Summoning", 0.95f, 4, "","> Fallen Lunatics (95%),\n> Fallen Shaman (60%),\n> Caps at 5 shamans")); // change by DAV 1f to 0.95f > ty ^.^
+
+			// Erethon
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Erethon", AnimSnoEnum._angel_corrupt_attack_dash_in), new DAV_BossSkill("Erethon", "Dash", 1f, 8,"", "> Short Dash triggered when any player is beyond 5 yards\n> Long Dash triggered when any player is beyond 15 yards")); //%thorns?
+			// Normal Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Erethon", AnimSnoEnum._x1_lr_boss_angel_corrupt_a_cast_01), new DAV_BossSkill("Erethon", "Poison Blast", 1f, 3));	//%thorns?
+
+			// Eskandiel
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Eskandiel", AnimSnoEnum._x1_dark_angel_cast), new DAV_BossSkill("Eskandiel", "Repulsion Wave", 1f, 3)); //%thorns?
+			// Normal Skills
+			//BossSkill_List.Add(new DAV_KeyAnime("Eskandiel", AnimSnoEnum._x1_dark_angel_attack_02), new DAV_BossSkill("Eskandiel", "Vortex", 1f, 11, "", "Only used when players are beyond 25 yards"));
+			//BossActor_List.Add(new DAV_KeyActor("Eskandiel", ActorSnoEnum._arcaneenchanteddummy_spawn), new DAV_BossSkill("Eskandiel", "Arcane", 1f, 4, "", ""));
+
+			// Hamelin
+			// Normal Skills
+			BossActor_List.Add(new DAV_KeyActor("Hamelin", ActorSnoEnum._p4_ratking_thunderdome_proxyactor), new DAV_BossSkill("Hamelin", "Plagued Arena", 1f, 12, "", "Lasts for 10s"));
+			// headbutt has no unique animation
+
+			// Infernal Maiden
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Infernal Maiden", AnimSnoEnum._x1_deathmaiden_attack_04_aoe), new DAV_BossSkill("Infernal Maiden", "Overhead Smash", 1f, 14, "", "> Procs 2 tick of thorns @ 100%/tick"));
+			BossSkill_List.Add(new DAV_KeyAnime("Infernal Maiden", AnimSnoEnum._x1_deathmaiden_attack_special_360_01), new DAV_BossSkill("Infernal Maiden", "Spinning Attack", 1f, 11, "", "> Procs 4 tick of thorns @ 50%/tick"));
+			// Normal Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Infernal Maiden", AnimSnoEnum._x1_deathmaiden_attack_special_flip_01), new DAV_BossSkill("Infernal Maiden", "Fire Nova", 0.45f, 25, "", "> Unlocks at 45% HP\n> Insignificant thorns effect against this skill"));
+			BossSkill_List.Add(new DAV_KeyAnime("Infernal Maiden", AnimSnoEnum._x1_deathmaiden_temp_cast_01), new DAV_BossSkill("Infernal Maiden", "Teleport", 1f, 7));
+
+			// Man Carver
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Man Carver", AnimSnoEnum._butcher_attack_charge_01_in), new DAV_BossSkill("Man Carver", "Charge", 1f, 19)); //%thorns?
+			BossActor_List.Add(new DAV_KeyActor("Man Carver", ActorSnoEnum._x1_unique_monster_generic_aoe_dot_fire_10foot), new DAV_BossSkill("Man Carver", "Mark of Fire", 1f, 12, "", "> 10-yard radius, lasts 15s")); //%thorns?
+			BossSkill_List.Add(new DAV_KeyAnime("Man Carver", AnimSnoEnum._butcher_attack_fanofchains), new DAV_BossSkill("Man Carver", "Fan of Spears", 0.75f, 12, "", "> Unlocks at 75% HP")); //%thorns?
+			// Normal Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Man Carver", AnimSnoEnum._butcher_attack_05_telegraph), new DAV_BossSkill("Man Carver", "Heavy Smash", 1f, 11));
+			BossSkill_List.Add(new DAV_KeyAnime("Man Carver", AnimSnoEnum._butcher_attack_chain_01_in), new DAV_BossSkill("Man Carver", "Sickle Grab", 0.5f, 12, "", "> Unlocks at 50% HP"));
+
+			// Orlash
+			// needs work: skills on cooldowns in a difficult pattern
+
+			// Perdition
+			// Good Skills
+			//BossSkill_List.Add(new DAV_KeyAnime("Perdition", AnimSnoEnum._lordofdespair_attack_energyblast), new DAV_BossSkill("Perdition", "Blade Cleave", 1f, 1, "", "> Procs 1 tick of thorns @ 100%/tick"));
+			// Normal Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Perdition", AnimSnoEnum._lordofdespair_attack_teleport_full), new DAV_BossSkill("Perdition", "Blink Strike", 1f, 11, "Stun to interrupt", "> Procs 1 tick of thorns @ 100%/tick"));
+			//BossSkill_List.Add(new DAV_KeyAnime("Perdition", AnimSnoEnum._lordofdespair_spellcast), new DAV_BossSkill("Perdition", "Volley", 1f, 11, "", "> Only used when players are beyond 5 yards\n> Procs 1 tick of thorns @ 33%/tick"));
+
+			// Perendi
+			// Good Skills
+			BossActor_List.Add(new DAV_KeyActor("Perendi", ActorSnoEnum._x1_lr_boss_malletdemon_fallingrocks), new DAV_BossSkill("Perendi", "Cave In", 1f, 5, "Stun for Krysbins", "> Only used when there is enough space\n> Procs 3 ticks of thorns @ 25%/tick)"));
+			// Normal Skills
+			BossActor_List.Add(new DAV_KeyActor("Perendi", ActorSnoEnum._coreelitedemon_b_lr_boss), new DAV_BossSkill("Perendi", "Summoning", 1f, 6)); // needs work: more frequent on enrage?
+
+			// Raiziel
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Raiziel", AnimSnoEnum._x1_sniperangel_firebomb_01), new DAV_BossSkill("Raiziel", "Lightning Orb", 1f, 3, "Stun for Krysbins", "> Only used when players are beyond 5 yards")); //%thorns?
+			// Normal Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Raiziel", AnimSnoEnum._x1_sniperangel_temp_cast_01), new DAV_BossSkill("Raiziel", "Holy Bolt Nova", 0.75f, 8, "", "> Volley of 7 holy dmg bolts (wide arc) when below 75% HP\n> Volley of 13 holy dmg bolts (360) when below 25% HP"));
+
+			// Rime
+			// Good Skills
+			BossActor_List.Add(new DAV_KeyActor("Rime", ActorSnoEnum._x1_unique_monster_generic_aoe_dot_cold_10foot), new DAV_BossSkill("Rime", "Frost Pools", 1f, 6, "", "> Procs 1 tick of thorns @ 100%/tick"));
+			// Normal Skills
+			BossActor_List.Add(new DAV_KeyActor("Rime", ActorSnoEnum._x1_unique_monster_generic_aoe_dot_cold_20foot), new DAV_BossSkill("Rime", "Frost Ring", 1f, 6, "", "> Procs 1 tick of thorns @ 100%/tick"));
+			//BossActor_List.Add(new DAV_KeyActor("Rime", ActorSnoEnum._x1_unique_monster_generic_projectile_cold), new DAV_BossSkill("Rime", "Volley", 1f, 6, "", ""));
+
+			// Sand Shaper
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Sand Shaper", AnimSnoEnum._zoltunkulle_direct_cast_04), new DAV_BossSkill("Sand Shaper", "Fire Ball", 1f, 3)); //%thorns?
+			BossSkill_List.Add(new DAV_KeyAnime("Sand Shaper", AnimSnoEnum._zoltunkulle_aoe_01), new DAV_BossSkill("Sand Shaper", "Cave In", 0.65f, 9, "Stun for Krysbins", "> Unlocks at 65% HP, unavailable after 40% HP")); // change by DAV 75% HP to 65% HP @DAV Cave In is locked after 40%, can you code this in? //%thorns?
+			// Normal Skills
+			//BossSkill_List.Add(new DAV_KeyAnime("Sand Shaper", AnimSnoEnum._zoltunkulle_taunt_01), new DAV_BossSkill("Sand Shaper", "Taunt", 1f, 8));
+			//BossSkill_List.Add(new DAV_KeyAnime("Sand Shaper", AnimSnoEnum._zoltunkulle_omni_cast_05_fadeout), new DAV_BossSkill("Sand Shaper", "Teleport", 1f, 7));
+			//BossSkill_List.Add(new DAV_KeyAnime("Sand Shaper", AnimSnoEnum._zoltunkulle_omni_cast_01), new DAV_BossSkill("Sand Shaper", "Twister", 0.75f, 5, "", "> Unlocks at 75% HP"));
+			//BossSkill_List.Add(new DAV_KeyAnime("Sand Shaper", AnimSnoEnum._zoltunkulle_omni_cast_04), new DAV_BossSkill("Sand Shaper", "Slow Time", 0.65f, 13, "", "> Unlocks at 65% HP"));
+
+			// Saxtris
+			// Normal Skills
+			//BossActor_List.Add(new DAV_KeyActor("Saxtris", ActorSnoEnum._zoltunkulle_energytwister), new DAV_BossSkill("Saxtris", "Twister", 1f, 8, "", "> Lasts 30s"));
+			BossSkill_List.Add(new DAV_KeyAnime("Saxtris", AnimSnoEnum._snakeman_melee_generic_cast_01), new DAV_BossSkill("Saxtris", "Summoning", 0.75f, 1, "", "> Winged Larvae unlocks at 75% HP\n > Snakechild unlocks at 50% HP\n> Caps at two full sets"));
+
+			// StoneSinger
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Stonesinger", AnimSnoEnum._sandmonster_temp_rock_throw), new DAV_BossSkill("Stonesinger", "Shovel", 1f, 2)); //%thorns?
+			// Normal Skills
+			//BossSkill_List.Add(new DAV_KeyAnime("Stonesinger", AnimSnoEnum._sandmonsterblack_attack_03_sandwall), new DAV_BossSkill("Stonesinger", "Summoning", 1f, 7));
+
+			// Tethrys
+			// Good Skills
+			BossActor_List.Add(new DAV_KeyActor("Tethrys", ActorSnoEnum._x1_adria_geyser), new DAV_BossSkill("Tethrys", "Geyser", 0.6f, 9, "Stun for Krysbins", "> Unlocks at 60% HP\n> 4 pools")); //%thorns?
+			// Normal Skills
+			BossActor_List.Add(new DAV_KeyActor("Tethrys", ActorSnoEnum._x1_unique_monster_generic_projectile_fire), new DAV_BossSkill("Tethrys", "Fire Ball", 1f, 3));  // Unpredictable; needs further testing
+			BossActor_List.Add(new DAV_KeyActor("Tethrys", ActorSnoEnum._succubus_bloodstar_projectile), new DAV_BossSkill("Tethrys", "Blood Star", 1f, 9)); // Unpredictable; needs further testing
+
+			// The Binder
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("The Binder", AnimSnoEnum._mistressofpain_attack_spellcast_poison), new DAV_BossSkill("The Binder", "Poison Spit", 0.65f, 3, "", "> Unlocks at 65% HP")); //%thorns?
+			// Normal Skills
+			//BossSkill_List.Add(new DAV_KeyAnime("The Binder", AnimSnoEnum._mistressofpain_attack_spellcast_summon_webpatch), new DAV_BossSkill("The Binder", "Net Toss", 1f, 8, "", "> Insignificant thorns effect against this skill"));
+
+			// The Choker
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("The Choker", AnimSnoEnum._x1_squigglet_taunt_01), new DAV_BossSkill("The Choker", "Plagued Circle", 0.75f, 19, "Stun for Krysbins", "> Unlocks at 75% HP")); //%thorns?
+			// Normal Skills
+			BossSkill_List.Add(new DAV_KeyAnime("The Choker", AnimSnoEnum._x1_squigglet_generic_cast), new DAV_BossSkill("The Choker", "Summoning", 1f, 4, "", "> Slimes (100%),\n> Caps at 10"));
+
+			// Vesalius
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Vesalius", AnimSnoEnum._p6_envy_cast_02), new DAV_BossSkill("Vesalius", "Energy Barrage", 1f, 1)); //%thorns?
+			// Normal Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Vesalius", AnimSnoEnum._p6_envy_teleport_start_02), new DAV_BossSkill("Vesalius", "Gateway", 1f, 12, "Stun to interrupt"));
+			//BossActor_List.Add(new DAV_KeyActor("Vesalius", ActorSnoEnum._x1_monsteraffix_frozenpulse_monster), new DAV_BossSkill("Vesalius", "Frozen Pulse", 1f, 6, "", ""));
+			//BossActor_List.Add(new DAV_KeyActor("Vesalius", ActorSnoEnum._x1_monsteraffix_teleportmines), new DAV_BossSkill("Vesalius", "Wormhole", 1f, 9, "", ""));
+
+			// Voracity
+			// Good Skills
+			BossSkill_List.Add(new DAV_KeyAnime("Voracity", AnimSnoEnum._gluttony_attack_areaeffect), new DAV_BossSkill("Voracity", "Fart Cloud", 1f, 11, "", "> Stun just before Skeletons enter Fart Cloud for Krysbins\n> Procs 1 tick of thorns per Cloud, per entry @ 20%/tick"));
+			// Normal Skills
+			//BossSkill_List.Add(new DAV_KeyAnime("Voracity", AnimSnoEnum._gluttony_attack_sneeze), new DAV_BossSkill("Voracity", "Vile Spew", 0.4f, 4, "", "> Unlocks at 40% HP\n> Procs 1 tick of thorns @ 33%/tick"));
+			//BossSkill_List.Add(new DAV_KeyAnime("Voracity", AnimSnoEnum._gluttony_attack_ranged_01), new DAV_BossSkill("Voracity", "Summoning", 0.65f, 6, "", "> Acid Slime (65%),\ncaps at 4"));
+		}
+
+		public void PaintWorld(WorldLayer layer) {
+			if (Hud.Game.SpecialArea != SpecialArea.GreaterRift) return ;
+			if (Hud.Game.RiftPercentage < 100) return;
+
+			float bosslife = 1f;
+			var bosses = Hud.Game.AliveMonsters.Where(m => m.Rarity == ActorRarity.Boss && m.SummonerAcdDynamicId == 0);
+			foreach(IMonster m in bosses) {
+				if (!BossFlight) {
+					BossFlight = true;
+					BossSkill_This.Clear();
+					BossActor_This.Clear();
+					preSkill.BossAnime = AnimSnoEnum._p7_cos_pet_azmodan_walk;
+					thisActor.BossActor = ActorSnoEnum._p7_cos_wings_cosmic_bat_01_wdm;
+
+					preSkill.Name = m.SnoMonster.NameEnglish;
+					thisActor.Name = m.SnoMonster.NameEnglish;
+					var curTime = Hud.Game.CurrentGameTick / 60d;
+					foreach(KeyValuePair<DAV_KeyAnime, DAV_BossSkill> BossSkill in BossSkill_List)
+						if(BossSkill.Value.Name == m.SnoMonster.NameEnglish)
+							BossSkill_This.Add(BossSkill.Key.BossAnime, curTime - BossSkill.Value.CooldownTime);
+
+					foreach(KeyValuePair<DAV_KeyActor, DAV_BossSkill> BossActor in BossActor_List)
+						if(BossActor.Value.Name == m.SnoMonster.NameEnglish)
+							BossActor_This.Add(BossActor.Key.BossActor, curTime - BossActor.Value.CooldownTime);
+				}
+				bosslife = (float) (m.CurHealth / m.MaxHealth);
+				if (bosslife < 0 || bosslife > 1)
+					bosslife = 1;
+
+				if (m.Animation == preSkill.BossAnime) continue;
+
+				preSkill.BossAnime = m.Animation;
+				if (!BossSkill_List.ContainsKey(preSkill)) continue;
+
+				var cTime = Hud.Game.CurrentGameTick / 60d;
+				if (showDebug) {
+					var tmplist = BossSkill_List[preSkill];
+					var curCD = (tmplist.ChangeCD && bosslife < tmplist.ChangeCD_time) ? tmplist.ChangeCD_valve : tmplist.CooldownTime;
+					BossSkill_List[preSkill].CooldownDebug = cTime - BossSkill_This[preSkill.BossAnime] - curCD;
+				}
+				BossSkill_This[preSkill.BossAnime] = cTime;
+			}
+
+			if (!BossFlight) return;
+
+			var yref = YPos;
+			if (BossSkill_This.Count > 0) {
+				var tmpanime = new DAV_KeyAnime(preSkill.Name, AnimSnoEnum._p7_cos_pet_azmodan_walk);
+				foreach(KeyValuePair<AnimSnoEnum, double> BossCD in BossSkill_This) {
+					tmpanime.BossAnime = BossCD.Key;
+					BossSkillPaint(BossSkill_List[tmpanime], BossCD.Value, bosslife, ref yref);
+				}
+			}
+
+			if (BossActor_This.Count == 0) return;
+			var bossActor = Hud.Game.Actors.Where(a => a.LastSpeak == null && BossActor_This.ContainsKey(a.SnoActor.Sno));
+			foreach (var actor in bossActor) {
+				var cTime = Hud.Game.CurrentGameTick / 60d;
+				thisActor.BossActor = actor.SnoActor.Sno;
+				if (showDebug) {
+					var tmplist = BossActor_List[thisActor];
+					var curCD = (tmplist.ChangeCD && bosslife < tmplist.ChangeCD_time) ? tmplist.ChangeCD_valve : tmplist.CooldownTime;
+					BossActor_List[thisActor].CooldownDebug = cTime - BossActor_This[actor.SnoActor.Sno] - curCD;
+				}
+				actor.LastSpeak = Hud.Time.CreateWatch();
+			//  actor.LastSpeak.Start();
+				BossActor_This[actor.SnoActor.Sno] = cTime;
+			}
+
+			var tmpactor = new DAV_KeyActor(thisActor.Name, ActorSnoEnum._p7_cos_wings_cosmic_bat_01_wdm);
+			foreach(KeyValuePair<ActorSnoEnum, double> BossCD in BossActor_This) {
+				tmpactor.BossActor = BossCD.Key;
+				BossSkillPaint(BossActor_List[tmpactor], BossCD.Value, bosslife, ref yref);
+			}
+		}
+
+		public void OnNewArea(bool newGame, ISnoArea area) {
+			BossFlight = false;
+		}
+
+		public void BossSkillPaint(DAV_BossSkill skillData, double preCDvalue, float bosslife, ref float yref) {
+			var text = skillData.SkillName;
+			if (skillData.HintShort != "")
+				text += " (" + skillData.HintShort + ")";
+			var textLayout = SkillFont.GetTextLayout(text);
+			SkillFont.DrawText(text, XPos, yref);
+
+			var rect = new RectangleF(XPos, yref, barW, barH + textLayout.Metrics.Height * 1.2f);
+			yref += textLayout.Metrics.Height * 1.2f;
+
+			if (bosslife > skillData.AvailableTime) {
+				Brush_NA.DrawRectangle(XPos, yref, barW, barH);
+				text = "Not Ready";
+			}
+			else {
+				var curCD = (skillData.ChangeCD && bosslife < skillData.ChangeCD_time) ? skillData.ChangeCD_valve : skillData.CooldownTime;
+				var skillCD = curCD - (Hud.Game.CurrentGameTick / 60d - preCDvalue);
+				if (skillCD < 0) {
+					Brush_Ready.DrawRectangle(XPos, yref, barW, barH);
+					text = "Ready to Cast";
+				}
+				else {
+					Brush_BG.DrawRectangle(XPos, yref, barW, barH);
+					Brush_CD.DrawRectangle(XPos, yref, (float) (barW * skillCD / curCD), barH);
+					text = skillCD.ToString(CDformat) + "s";
+				}
+			}
+
+			textLayout = SkillFont.GetTextLayout(text);
+			SkillFont.DrawText(text, XPos + 3, yref + (barH - textLayout.Metrics.Height)/2);
+			if (showDebug) SkillFont.DrawText(skillData.CooldownDebug.ToString("F1") + "s | life: " + bosslife.ToString("F2"), XPos + 3 + barW, yref + (barH - textLayout.Metrics.Height)/2);
+			yref += barH * 1.3f;
+
+			if (skillData.HintHided != "" && Hud.Window.CursorInsideRect(rect.X, rect.Y, rect.Width, rect.Height))
+				Hud.Render.SetHint(skillData.HintHided);
+		}
+	}
+
+	public class DAV_KeyActor {
+		public string Name { get; set; }
+		public ActorSnoEnum BossActor { get; set; }
+
+		public DAV_KeyActor(string name, ActorSnoEnum actor) {
+			Name = name;
+			BossActor = actor;
+		}
+
+		public class EqualityComparer : IEqualityComparer<DAV_KeyActor> {
+			public bool Equals(DAV_KeyActor x, DAV_KeyActor y) { return x.Name == y.Name && x.BossActor == y.BossActor; }
+			public int GetHashCode(DAV_KeyActor obj) {
+				string combined = obj.Name + "|" + obj.BossActor.ToString();
+				return combined.GetHashCode();
+			}
+		}
+	}
+
+	public class DAV_KeyAnime {
+		public string Name { get; set; }
+		public AnimSnoEnum BossAnime { get; set; }
+
+		public DAV_KeyAnime(string name, AnimSnoEnum anime) {
+			Name = name;
+			BossAnime = anime;
+		}
+
+		public class EqualityComparer : IEqualityComparer<DAV_KeyAnime> {
+			public bool Equals(DAV_KeyAnime x, DAV_KeyAnime y) { return x.Name == y.Name && x.BossAnime == y.BossAnime; }
+			public int GetHashCode(DAV_KeyAnime obj) {
+				string combined = obj.Name + "|" + obj.BossAnime.ToString();
+				return combined.GetHashCode();
+			}
+		}
+	}
+
+	public class DAV_BossSkill {
+		public string Name { get; set; }
+		public string SkillName { get; set; }
+		public string HintShort { get; set; }
+		public string HintHided { get; set; }
+		public float AvailableTime { get; set; }
+		public double CooldownTime { get; set; }
+		public double CooldownDebug { get; set; }
+
+		public bool ChangeCD { get; set; }
+		public float ChangeCD_time { get; set; }
+		public double ChangeCD_valve { get; set; }
+
+		public DAV_BossSkill(string name, string skill, float life, double CD, string Desc = "", string hideMsg = "") {
+			Name = name;
+			SkillName = skill;
+			HintShort = Desc;
+			HintHided = hideMsg;
+			AvailableTime = life;
+			CooldownTime = CD;
+			CooldownDebug = 0d;
+			ChangeCD = false;
+		}
+
+		public void AddSecendCD(float life, double CD) {
+			ChangeCD = true;
+			ChangeCD_time = life;
+			ChangeCD_valve = CD;
+		}
+	}
+}
