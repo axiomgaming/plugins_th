@@ -356,7 +356,7 @@ namespace Turbo.Plugins.glq
             }
             if (palmedCount > 0 && ShowPalmedCount)
             {
-                textBuilder.AppendFormat("Palmed: {0}/{1}", palmedCount, monstersCount);
+                textBuilder.AppendFormat("Smacked {0}/{1}", palmedCount, monstersCount);
                 if (ElitepalmedCount > 0) textBuilder.AppendFormat(" （Elite: {0}/{1}）", ElitepalmedCount, EliteCount);
                 textBuilder.AppendLine();
             }
@@ -369,7 +369,7 @@ namespace Turbo.Plugins.glq
             if (strongarmedCount > 0 && ShowStrongarmedCount)
             {
                 textBuilder.AppendFormat("Strongarm: {0}/{1}", strongarmedCount, monstersCount);
-                if (ElitestrongarmedCount > 0) textBuilder.AppendFormat(" （Strongarm: {0}/{1}）", ElitestrongarmedCount, EliteCount);
+                if (ElitestrongarmedCount > 0) textBuilder.AppendFormat(" （Elite: {0}/{1}）", ElitestrongarmedCount, EliteCount);
                 textBuilder.AppendLine();
             }
 

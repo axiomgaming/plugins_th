@@ -9,7 +9,7 @@ namespace Turbo.Plugins.glq
 
 		public WorldDecoratorCollection SpiritBarragePhantasmDecorator { get; set; }
 		public bool ShowOthers {get; set;}
-		
+
 		public SpiritBarragePhantasmPlugin()
 		{
 			Enabled = true;
@@ -18,13 +18,14 @@ namespace Turbo.Plugins.glq
 		public override void Load(IController hud)
 		{
 			base.Load(hud);
-			
+
 			ShowOthers = true; // also show those of other players.
-			
+
 			SpiritBarragePhantasmDecorator = new WorldDecoratorCollection(
 				new GroundCircleDecorator(Hud)
 				{
-					Brush = Hud.Render.CreateBrush(255, 0, 128, 255, 2),
+					//B=255, R= 0, G=128 originally; now pink = 255/213/0
+					Brush = Hud.Render.CreateBrush(255, 213, 0, 255, 8),
 					Radius = 10,
 				},
 				new GroundLabelDecorator(Hud)
