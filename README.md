@@ -7,7 +7,7 @@ then copy this whole plugins folder in fresh.
 
 ### Disabling
 
-Remove a plugin's `.cs` file will remove it entirely, but you can also typically
+Removing a plugin's `.cs` file will remove it entirely, but you can also typically
 disable a plugin by finding its `.cs` file, then editing to change the one line
 that reads `Enabled = true;` to `Enabled = false;`
 
