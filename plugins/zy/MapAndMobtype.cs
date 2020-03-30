@@ -66,7 +66,7 @@ namespace Turbo.Plugins.Zy
             new MonsterSet("Morlu Hell Witch", new List<string>
             { "Bile Crawler","Corrupted Angel", "Demonic Hellflyer", "Gloom Wraith", "Hell Witch", "Mallet Lord", "Morlu Incinerator", "Morlu Legionnaire"}),
 
-            new MonsterSet("Boggen Trappers ", new List<string>
+            new MonsterSet("Bogan Trappers ", new List<string>
             { "Bogan Trapper", "Boggit", "Dark Moon Clan Impaler", "Dark Moon Clan Shaman", "Dark Moon Clan Warrior", "Fallen Hellhound", "Fallen Lunatic",
                 "Fallen Slavelord", "Lacuni Slasher", "Lacuni Stalker", "Tusked Bogan"}),
 
@@ -81,7 +81,7 @@ namespace Turbo.Plugins.Zy
             { "Armored Destroyer", "Colossal Golgor", "Corrupted Angel", "Dark Hellion", "Disentombed Hulk", "Enslaved Nightmare", "Exarch", "Fiery Spiderling",
                 "Lacuni Huntress", "Lacuni Stalker", "Mallet Lord", "Oppressor", "Revenant Soldier", "Scorching Creeper", "Summoned Archer", "Winged Assassin"}),
 
-            new MonsterSet("Big Spiders", new List<string>
+            new MonsterSet("Big Booties", new List<string>
             { "Dark Hellion", "Darkmoth", "Death Maiden", "Moon Clan Shaman", "Stinging Swarm", "Stygian Crawler", "Summoned Archer", "Summoned Shield Guard",
                 "Tormented Stinger", "Toxic Lurker", "Webspitter Spider"}),
 
@@ -223,7 +223,7 @@ namespace Turbo.Plugins.Zy
             {"p6_church_w_entrance_01","p6_church_ne_01","p6_church_ns_01","p6_church_sw_01","p6_church_e_exit_01", "p6_church_n_entrance_01", "p6_church_se_01", "p6_church_n_exit_01", "p6_church_ew_01","p6_church_w_exit_01",
                 "p6_church_s_exit_01", "p6_church_s_entrance_01", "p6_church_nw_01", "p6_church_e_entrance_01", "p6_church_n_dungeonstone_exit_01", }),
 
-            new MapName("Corvus", new List<string>
+            new MapName("Doorvus", new List<string>
             {"x1_catacombs_n_entrance_04","x1_catacombs_nse_01","x1_catacombs_s_01","x1_catacombs_sw_01","x1_catacombs_ns_01","x1_catacombs_n_exit_01", "x1_catacombs_s_entrance_01","x1_catacombs_ns_02","x1_catacombs_nw_01",
                 "x1_catacombs_se_02","x1_catacombs_ns_06","x1_catacombs_ew_02","x1_catacombs_ew_01","x1_catacombs_e_exit_02", "x1_catacombs_w_entrance_01","x1_catacombs_se_01","x1_catacombs_new_02","x1_catacombs_w_01",
                 "x1_catacombs_ne_01","x1_catacombs_s_exit_01", "x1_catacombs_e_entrance_01", "x1_catacombs_new_01","x1_catacombs_ne_02", "x1_catacombs_w_exit_01", "x1_catacombs_e_01","x1_catacombs_nw_02","x1_catacombs_sw_02",
@@ -291,7 +291,7 @@ namespace Turbo.Plugins.Zy
                 "a3dun_keep_sw_02", "a3dun_keep_n_entrance_02", "a3dun_keep_ew_03_forge","a3dun_keep_nw_02_forge", "a3dun_keep_ew_01", "a3dun_keep_se_01", "a3dun_keep_se_02","a3dun_keep_new_04_river", "a3dun_keep_se_04_forge",
                 "a3dun_keep_nse_01", "a3dun_keep_ns_03_forge", "a3dun_keep_ns_01","a3dun_keep_n_exit_01", }),
 
-             new MapName("Pest Tunnel", new List<string>
+             new MapName("Plague Tunnels", new List<string>
             {"x1_abattoir_n_entrance_01","x1_abattoir_nse_05","x1_abattoir_se_05","x1_abattoir_nsew_03","x1_abattoir_s_01","x1_abattoir_w_01","x1_abattoir_nsw_05","x1_abattoir_n_exit_01","x1_abattoir_nsew_04",
                  "x1_abattoir_w_entrance_01", "x1_abattoir_ns_02","x1_abattoir_n_01","x1_abattoir_ew_02","x1_abattoir_nw_05","x1_abattoir_new_05","x1_abattoir_sw_05","x1_abattoir_e_exit_01", "x1_abattoir_sew_05","x1_abattoir_e_01",
                  "x1_abattoir_e_entrance_01", "x1_abattoir_ne_05","x1_abattoir_s_exit_01", "x1_abattoir_s_entrance_01","x1_abattoir_w_exit_01", "x1_abattoir_n_dungeonstone_exit_01", }),
@@ -363,7 +363,7 @@ namespace Turbo.Plugins.Zy
 
             new MapName("Town", new List<string>
             {"x1_westmarch_hub_e01_n03", "px_trout_tristram_e10_s15", })
-            
+
             };
 
 
@@ -497,7 +497,7 @@ namespace Turbo.Plugins.Zy
                 }
             }
             //DEBUG
-            
+
             List<MapName> MatchingMapNames = new List<MapName>();
             foreach (MapName mapset in MapNameList)
             {

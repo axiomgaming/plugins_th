@@ -34,15 +34,15 @@ namespace Turbo.Plugins.Extended.Players
 	public IBrush Brush_Hatred { get; set; }
 	public IBrush Brush_Disc { get; set; }
 
-        public bool MeResource { get; set; }
-        public bool MeLife { get; set; }
-        public bool MeShield { get; set; }
+  public bool MeResource { get; set; }
+  public bool MeLife { get; set; }
+  public bool MeShield { get; set; }
 
-        public bool PlayersResource { get; set; }
-        public bool PlayersLife { get; set; }
-        public bool PlayersShield { get; set; }
+  public bool PlayersResource { get; set; }
+  public bool PlayersLife { get; set; }
+  public bool PlayersShield { get; set; }
 
-        public IFont HealthFont { get; set; }
+  public IFont HealthFont { get; set; }
 
 	public PlayersArcPlugin()
 	{
@@ -97,42 +97,39 @@ namespace Turbo.Plugins.Extended.Players
 	{
 	    if (player.IsMe) {
 
-		if (MeResource) {
-		    if (player.HeroClassDefinition.HeroClass == HeroClass.DemonHunter)
-		    {
-			PaintBackgroundArc(player, -45, 40, 2.6f); PaintResArc(player, -45, 40, 2.6f); 		// Hatred
-			PaintBackgroundArc(player, 50, end, 2.6f); PaintSecResArc(player, 50, end, 2.6f);	// Disc
-		    }
-		    else { PaintBackgroundArc(player, -45, end, 2.6f); PaintResArc(player, -45, end, 2.6f); }
-		}
+				if (MeResource) {
+				    if (player.HeroClassDefinition.HeroClass == HeroClass.DemonHunter)
+				    {
+					PaintBackgroundArc(player, -45, 40, 2.6f); PaintResArc(player, -45, 40, 2.6f); 		// Hatred
+					PaintBackgroundArc(player, 50, end, 2.6f); PaintSecResArc(player, 50, end, 2.6f);	// Disc
+				    }
+				    else { PaintBackgroundArc(player, -45, end, 2.6f); PaintResArc(player, -45, end, 2.6f); }
+				}
 
-		if (MeLife) { PaintBackgroundArc(player, -45, end, 3.3f); PaintLifeArc(player, -45, end, 3.3f); }
-		if (MeShield) PaintShieldArc(player, -47, end + 2, 3.6f);
-	    }
+				if (MeLife) { PaintBackgroundArc(player, -45, end, 3.3f); PaintLifeArc(player, -45, end, 3.3f); }
+				if (MeShield) PaintShieldArc(player, -47, end + 2, 3.6f);
+    } else {
 
-	    else
-	    {
+				if (PlayersResource) {
+				    if (player.HeroClassDefinition.HeroClass == HeroClass.DemonHunter)
+				    {
+					PaintBackgroundArc(player, start, 60, 2.6f); PaintResArc(player, start, 60, 2.6f); 	// Hatred
+					PaintBackgroundArc(player, 70, end, 2.6f); PaintSecResArc(player, 70, end, 2.6f);	// Disc
+				    }
+				    else { PaintBackgroundArc(player, start, end, 2.6f); PaintResArc(player, start, end, 2.6f); }
+				}
 
-		if (PlayersResource) {
-		    if (player.HeroClassDefinition.HeroClass == HeroClass.DemonHunter)
-		    {
-			PaintBackgroundArc(player, start, 60, 2.6f); PaintResArc(player, start, 60, 2.6f); 	// Hatred
-			PaintBackgroundArc(player, 70, end, 2.6f); PaintSecResArc(player, 70, end, 2.6f);	// Disc
-		    }
-		    else { PaintBackgroundArc(player, start, end, 2.6f); PaintResArc(player, start, end, 2.6f); }
-		}
-
-		if (PlayersLife) { 
-		    if (Hud.Game.IsInTown && player.IsOnScreen)
-		    {					
-			var health = ValueToString(player.Defense.HealthMax, ValueFormat.LongNumber);
-			HealthFont.DrawText(HealthFont.GetTextLayout(health), player.FloorCoordinate.ToScreenCoordinate().X - HealthFont.GetTextLayout(health).Metrics.Width * 2, player.FloorCoordinate.ToScreenCoordinate().Y + 5);
-		    }
-		    PaintBackgroundArc(player, start, end, 3.3f); PaintLifeArc(player, start, end, 3.3f); }
-		if (PlayersShield) PaintShieldArc(player, start - 2, end + 2, 3.6f);
+				if (PlayersLife) {
+				    if (Hud.Game.IsInTown && player.IsOnScreen)
+				    {
+					var health = ValueToString(player.Defense.HealthMax, ValueFormat.LongNumber);
+					HealthFont.DrawText(HealthFont.GetTextLayout(health), player.FloorCoordinate.ToScreenCoordinate().X - HealthFont.GetTextLayout(health).Metrics.Width * 2, player.FloorCoordinate.ToScreenCoordinate().Y + 5);
+				    }
+				    PaintBackgroundArc(player, start, end, 3.3f); PaintLifeArc(player, start, end, 3.3f); }
+				if (PlayersShield) PaintShieldArc(player, start - 2, end + 2, 3.6f);
 
 
-	    }
+    }
 
 	}
 
