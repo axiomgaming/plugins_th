@@ -36,9 +36,9 @@ namespace Turbo.Plugins.RNN
 			base.Load(hud);
 			Order = 30002;
 
-			Xpor = 0.45f; //0.46f;   		// Valid values: from 0 to 1 . To set the x coordinate of the icon
-			Ypor = 0.39f; //0.43f;			// Valid values: from 0 to 1 . To set the y coordinate of the icon
-			SizeMultiplier = 1.3f; 	// Size multiplier for icons
+			Xpor = 0.46f;   		// Valid values: from 0 to 1 . To set the x coordinate of the icon
+			Ypor = 0.43f;			// Valid values: from 0 to 1 . To set the y coordinate of the icon
+			SizeMultiplier = 1f; 	// Size multiplier for icons
 			Opacity	= 0.75f;		// 0..1 Textures
 			OnlyGR = false;			// Show in GR only
 			OnlyMe = false;			// Ignore phantasm created by others players

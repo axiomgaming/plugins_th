@@ -46,8 +46,8 @@ namespace Turbo.Plugins.RNN
 		public bool LineToPylon { get; set;}
 		public float LineToPylonWidth { get; set;}
 
-        public bool CircleHealingWells { get; set;}
-        public bool CirclePoolOfReflection { get; set;}
+    public bool CircleHealingWells { get; set;}
+    public bool CirclePoolOfReflection { get; set;}
 		public bool ShowPylonSpawn { get; set; }
 		public bool ShowPopup { get; set;}
 
@@ -350,7 +350,8 @@ namespace Turbo.Plugins.RNN
 							}
 							if (shrineName != string.Empty)
 							{
-								Hud.Sound.Speak( shrineName ?? shrine.SnoActor.NameLocalized ); // if == null it will be used localized name for that shrine , if == "" (string.Empty) no TTS for that shrine
+                //pylon discovery
+								Hud.Sound.Speak(shrineName ?? shrine.SnoActor.NameLocalized); // if == null it will be used localized name for that shrine , if == "" (string.Empty) no TTS for that shrine
 							}
 						}
 						ShrineCoordReapp[coord] = Reappears;
@@ -375,7 +376,7 @@ namespace Turbo.Plugins.RNN
 							var msg = ShrinesDic[stype].TTSBuffON;
 							if (TTSBuffPylon && !string.IsNullOrEmpty(msg)) 	// null or "" -> no TTS
 							{
-								if (NotifyInTown || !Hud.Game.IsInTown) { Hud.Sound.Speak(msg);	}
+								if (NotifyInTown || !Hud.Game.IsInTown) { Hud.Sound.Speak(msg);	} //pylon pickup
 							}
 							msg = ShrinesDic[stype].PopupBuff;
 							if (ShowPopup && !string.IsNullOrEmpty(msg))  // null or "" -> no popup
@@ -400,7 +401,9 @@ namespace Turbo.Plugins.RNN
 						var msg = ShrinesDic[stype].TTSBuffOFF;
 						if (TTSBuffPylon && !string.IsNullOrEmpty(msg))
 						{
-							if (NotifyInTown || !Hud.Game.IsInTown)		{ Hud.Sound.Speak(msg);	}
+							if (NotifyInTown || !Hud.Game.IsInTown)		{  //pylon ends
+                Hud.Sound.Speak(msg);
+              }
 						}
 						msg = ShrinesDic[stype].PopupBuff;
 						if (ShowPopup && !string.IsNullOrEmpty(msg))

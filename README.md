@@ -12,6 +12,9 @@ disable a plugin by finding its `.cs` file, then editing to change the one line
 that reads `Enabled = true;` to `Enabled = false;`
 
 ### Changelog
+2020-03-30: Moved compatible config tweaks to PluginEnablerOrDisablerPlugin rather
+than direct source edits. SpiritBarragePhantasmPlugin extended to support color/size
+options.
 
 2020-03-29: Cleaned up extant plugins, minor tweaks to Spirit Barrage-related plugins.
 - Fixed files to be named `.cs` (not `.txt`), reenabling a handful of

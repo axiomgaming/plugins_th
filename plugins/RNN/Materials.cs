@@ -35,9 +35,9 @@ namespace Turbo.Plugins.RNN
 			base.Load(hud);
 			Order = 30001;
 
-			Xpor = 0.100f; //0.567f;
-			Ypor = 0.001f; //0.984f;
-			SizeMultiplier = 1.05f; //1.0f;
+			Xpor = 0.567f;
+			Ypor = 0.984f;
+			SizeMultiplier = 1.0f;
 			Separation	= 0.5f;
 			ColorText = true;
 			WarningBS = true;
@@ -48,7 +48,7 @@ namespace Turbo.Plugins.RNN
 			BorderBrushRed = Hud.Render.CreateBrush(255, 255, 0, 0, 1);
 		}
 
-        public void Customize()
+    public void Customize()
 		{
 			ListMats = new long[] {	0,0,0,0,0,0,0,0,0 };
 
@@ -89,12 +89,12 @@ namespace Turbo.Plugins.RNN
 			}
 		}
 
-        public string MatsToString(long value)
-        {
-            if 		(value < 1000)		{	return value.ToString("#,0.#", CultureInfo.InvariantCulture);					}
+    public string MatsToString(long value)
+    {
+      if 		(value < 1000)		{	return value.ToString("#,0.#", CultureInfo.InvariantCulture);					}
 			else if (value < 1000000)	{	return (value / 1000.0f).ToString("#,0.#K", CultureInfo.InvariantCulture);		}
 			else 						{	return (value / 1000000.0f).ToString("#,0.#M", CultureInfo.InvariantCulture);	}
-        }
+    }
 
 		public void PaintTopInGame(ClipState clipState)
 		{

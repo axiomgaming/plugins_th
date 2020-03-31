@@ -40,13 +40,13 @@ namespace Turbo.Plugins.User
             Hud.TogglePlugin<WaypointQuestsPlugin>(YES);                // Act Map normal/special bounty names and completion status
             // Actors
             Hud.TogglePlugin<ChestPlugin>(YES);                         // Minimap chest marker
-            Hud.TogglePlugin<ClickableChestGizmoPlugin>(NOO);           // 
+            Hud.TogglePlugin<ClickableChestGizmoPlugin>(NOO);           //
             Hud.TogglePlugin<CursedEventPlugin>(YES);                   // Minimap cursed event chest marfker
-            Hud.TogglePlugin<DeadBodyPlugin>(NOO);                      // 
+            Hud.TogglePlugin<DeadBodyPlugin>(NOO);                      //
             Hud.TogglePlugin<GlobePlugin>(YES);                         // Minimap rift progression orbs and power globes
-            Hud.TogglePlugin<OculusPlugin>(NOO);                        // 
+            Hud.TogglePlugin<OculusPlugin>(NOO);                        //
             Hud.TogglePlugin<PortalPlugin>(YES);                        // Minimap portals to other levels
-            Hud.TogglePlugin<RackPlugin>(YES);                          // 
+            Hud.TogglePlugin<RackPlugin>(YES);                          //
             Hud.TogglePlugin<ShrinePlugin>(YES);                        // Minimap shrine and well markers
             // BuffLists
             Hud.TogglePlugin<CheatDeathBuffFeederPlugin>(NOO);          // Minimap shows red transpared overlay when your passive "cheat death" skill
@@ -66,14 +66,14 @@ namespace Turbo.Plugins.User
             // Inventory
             Hud.TogglePlugin<BloodShardPlugin>(YES);                    // Skillbar blood shard label
             Hud.TogglePlugin<InventoryAndStashPlugin>(YES);             // Draw "A" or "P" marker on items, item greying and cubing is customized here
-            Hud.TogglePlugin<InventoryFreeSpacePlugin>(YES);            // 
+            Hud.TogglePlugin<InventoryFreeSpacePlugin>(YES);            //
             Hud.TogglePlugin<InventoryKanaiCubedItemsPlugin>(YES);      // Inventory header cubed item icon and mouse hover description
             Hud.TogglePlugin<InventoryMaterialCountPlugin>(YES);        // Inventory bottom material counts
-            Hud.TogglePlugin<StashPreviewPlugin>(YES);                  // 
-            Hud.TogglePlugin<StashUsedSpacePlugin>(YES);                // 
+            Hud.TogglePlugin<StashPreviewPlugin>(YES);                  //
+            Hud.TogglePlugin<StashUsedSpacePlugin>(YES);                //
             // Items
             Hud.TogglePlugin<CosmeticItemsPlugin>(YES);                 // Minimap cosmetic item markers
-            Hud.TogglePlugin<HoveredItemInfoPlugin>(YES);               // 
+            Hud.TogglePlugin<HoveredItemInfoPlugin>(YES);               //
             Hud.TogglePlugin<ItemsPlugin>(YES);                         // Minimap markers for ancient and primal items
             Hud.TogglePlugin<PickupRangePlugin>(NOO);                   // Show pickup range under player feet
             // LabelLists
@@ -84,40 +84,121 @@ namespace Turbo.Plugins.User
             Hud.TogglePlugin<SceneHintPlugin>(NOO);                     // ???
             // Monsters
             Hud.TogglePlugin<DangerousMonsterPlugin>(NOO);              // Minimap Draws small circle red and name over named dangerous monsters. See CustomizeDefault().
-            Hud.TogglePlugin<EliteMonsterAffixPlugin>(YES);             // 
-            Hud.TogglePlugin<EliteMonsterSkillPlugin>(YES);             // 
-            Hud.TogglePlugin<ExplosiveMonsterPlugin>(NOO);              // 
+            Hud.TogglePlugin<EliteMonsterAffixPlugin>(YES);             //
+            Hud.TogglePlugin<EliteMonsterSkillPlugin>(YES);             //
+            Hud.TogglePlugin<ExplosiveMonsterPlugin>(NOO);              //
             Hud.TogglePlugin<GoblinPlugin>(YES);                        // Minimap goblin markers
-            Hud.TogglePlugin<MonsterPackPlugin>(NOO);                   // 
+            Hud.TogglePlugin<MonsterPackPlugin>(NOO);                   //
             Hud.TogglePlugin<MonsterRiftProgressionColoringPlugin>(YES);// Minimap rift progression monster colors
             Hud.TogglePlugin<StandardMonsterPlugin>(YES);               // Minimap  monster colors
-            Hud.TogglePlugin<TopMonsterHealthBarPlugin>(YES);           // 
+            Hud.TogglePlugin<TopMonsterHealthBarPlugin>(YES);           //
             // Players
-            Hud.TogglePlugin<BannerPlugin>(NOO);                        // 
-            Hud.TogglePlugin<HeadStonePlugin>(NOO);                     // 
-            Hud.TogglePlugin<MultiplayerExperienceRangePlugin>(NOO);    // 
-            Hud.TogglePlugin<OtherPlayersPlugin>(YES);                  // 
+            Hud.TogglePlugin<BannerPlugin>(NOO);                        //
+            Hud.TogglePlugin<HeadStonePlugin>(NOO);                     //
+            Hud.TogglePlugin<MultiplayerExperienceRangePlugin>(NOO);    //
+            Hud.TogglePlugin<OtherPlayersPlugin>(YES);                  //
             Hud.TogglePlugin<PlayerSkillPlugin>(YES);                   // Minimap player castable "minion" markers (hydra, sentry, black hole etc.)
-            Hud.TogglePlugin<SkillRangeHelperPlugin>(NOO);              // 
+            Hud.TogglePlugin<SkillRangeHelperPlugin>(NOO);              //
             // SkillBars
             Hud.TogglePlugin<OriginalHealthPotionSkillPlugin>(YES);     // Skillbar health potion cooldown timer
             Hud.TogglePlugin<OriginalSkillBarPlugin>(YES);              // Skillbar player skill cooldowns etc.
-            Hud.TogglePlugin<UiHiddenPlayerSkillBarPlugin>(NOO);	    // 
+            Hud.TogglePlugin<UiHiddenPlayerSkillBarPlugin>(NOO);	    //
         }
 
         void CustomizeSpecial()
         {
             // Add your own plugin customization code here so it is easy to keep separated from plugin's original code.
+            Hud.RunOnPlugin<RNN.OtherShrinePlugin>(plugin =>
+            {
+            	plugin.LabelHealingWells = "";		// Text on the minimap for HealingWells (null for namelocalized,"" for nothing)
+            	plugin.LabelPoolOfReflection = "XP Pool";	// Text on the minimap for pools (null for namelocalized,"" for nothing)
+            	plugin.LabelPossiblePylon = "Pylon?";	// Text for the labels of the places where possible pylons may appear
+            	// plugin.LabelPylonExchange = false;	// Exchange labels on map and mini map. If it is false they will always be shown
+              //
+            	// plugin.NotifyInTown = false;		// Enable or disable TTS/Popup in Town
+            	// plugin.TTSViewPylon = true;		// Notify with voice (TTS) the Pylons and Sanctuaries
+            	// plugin.TTSBuffPylon = true;		// Notify with voice (TTS) When you receive a buff (and lose) from a pylon/Sanctuary
+            	// plugin.TTSViewPoolText = "Pool";	// Notify with voice (TTS) the pools of Reflection, will read the indicated text. Set to "" (or null) for not TTS
+
+            	// plugin.HiddenPylonUsed = false;	// Hide or show (in gray) decorators for used pylons
+            	// plugin.LineToPylon = true;	// Draw a yellow line on the minimap to the PoolOfReflection/Pylon/Sanctuary detected
+            	// plugin.LineToPylonWidth = 1f;	// Line width
+
+            	// plugin.CircleHealingWells = true;  	// Red circles in unused wells
+            	// plugin.CirclePoolOfReflection = true; 	// Yellow circles in unused pools
+            	// plugin.ShowPylonSpawn = true;		// Hide or not the decorators of the possible Pylons. In case someone uses another complement for it
+            	// plugin.ShowPopup = true;		// Popup when you receive (or lose) a buff from a Pylon/Sanctuary
+
+            	// plugin.xPopup = 0.5f;		// 0f ... 1f  Popup Coordinate x
+            	// plugin.yPopup = 0.81f;		// 0f ... 1f  Popup Coordinate y
+            	// plugin.FontSizePopup = 9f;	// Size font for popup text
+
+
+            // If a pylon/sanc is not customized, default values: <Label Ground> = null, <Label Map> = null, <TTS view> = null, <TTS buff on> = "ShrineType Active", <TTS buff off> = "ShrineType Lost", <Popup buff> = "ShrineType"
+
+            // Format: plugin.ConfigAdd( <type pylon or sanc> , <Label Ground>, <Label Map> , <TTS view>, <TTS buff on>, <TTS buff off>, <Popup buff> );
+            // 	a)	<LabelGround> 	Text for Label (Ground),	"" for not label,	null for Namelocalized,
+            // 	a)	<Label Map> 	Text for Label (Map),		"" for not label,	null for Namelocalized,
+            //	c)	<TTS view>	Speak Text TTS,			"" for not TTS,		null for namelocalized,
+            // 	d)	<TTS buff on>	Speak Text TTS,			"" for not TTS,		null for not TTS,
+            // 	e)	<TTS buff off>	Speak Text TTS,			"" for not popup,	null for not TTS,
+            // 	f)	<Popup buff>	Popup Text,			"" for not Popup,	null for not popup,
+
+            	plugin.Config(ShrineType.PowerPylon,"Power","Power","Power","Power Active","Lost Power","[Power]");
+            	plugin.Config(ShrineType.ConduitPylon,"Condi","Condi","Conduit","Condi Active","Lost Conduit","[Condi]");
+            	plugin.Config(ShrineType.ChannelingPylon,"Channeling","Channeling","Channeling","Channeling Active","Lost Channeling","[Channeling]");
+            	plugin.Config(ShrineType.ShieldPylon,"Shield","Shield","Shield","Shield Active","Lost Shield","[Shield]");
+            	plugin.Config(ShrineType.SpeedPylon,"Speed","Speed","Speed","Speed Active.... I'm fast as fuck boyeeeeeeeeee","Speed Lost... I'm slow as fuck boyeeeeeeeeee","[Speed]");
+
+            	// plugin.Config(ShrineType.BlessedShrine,null,null,null,null,null,"Blessed");
+            	// plugin.Config(ShrineType.EnlightenedShrine,null,null,null,null,null,"Enlightened");
+            	// plugin.Config(ShrineType.FortuneShrine,null,null,null,null,null,"Fortune");
+            	// plugin.Config(ShrineType.FrenziedShrine,null,null,null,null,null,"Frenzied");
+            	// plugin.Config(ShrineType.EmpoweredShrine,null,null,"Empowered","Active Empowered","Lost Empowered","Empowered");
+            	// plugin.Config(ShrineType.FleetingShrine,null,null,null,null,null,"Fleeting");
+            	// plugin.Config(ShrineType.BanditShrine,null,null,"Bandit","ignored","ignored","ignored");
+            });
+
+            Hud.RunOnPlugin<RNN.Materials>(plugin =>
+            {
+            	plugin.Xpor = 0.100f;		// Valid values: from 0 to 1
+            	plugin.Ypor = 0.001f;		// Valid values: from 0 to 1
+            	plugin.SizeMultiplier = 1.05f;	// Size multiplier for text and icons
+            	// plugin.Separation = 0.5f;	// Valid values: equal to or greater than zero . Separation between one material and the next
+            	// plugin.ColorText = true;	// Different colors will be used for the text or white if ColorText = false
+            	// plugin.WarningBS = true;	// Show Rectagle Red when Remaining Blood Shard < RemainingBS
+            	// plugin.RemainingBS = 250;	// Limit
+            	// plugin.InventorySpace = true;	// Show Free Space in the Inventory
+            	// plugin.OnlyInTown = false;	// Show only in town
+            });
+
+            Hud.RunOnPlugin<RNN.SpiritBarrageIcon>(plugin =>
+          	{
+          		plugin.Xpor = 0.45f;   		// Valid values: from 0 to 1 . To set the x coordinate of the icon
+          		plugin.Ypor = 0.39f;		// Valid values: from 0 to 1 . To set the y coordinate of the icon
+          		plugin.SizeMultiplier = 1.3f; 	// Size multiplier for icon
+          		// plugin.Opacity = 0.75f;		// 0..1 Opacity for Textures
+          		// plugin.OnlyGR = false;		// Show  in GR only
+          		// plugin.OnlyMe = false;		// Ignore phantasm created by others players
+          		// plugin.warning = 2.0f;		// 9.0f...0f Text will take the color yellow when it reaches this value
+          	}  );
+
+            Hud.RunOnPlugin<glq.SpiritBarragePhantasmPlugin>(plugin => {
+              plugin.GroundR = 213;
+              plugin.GroundB = 255;
+              plugin.GroundG = 0;
+              plugin.GroundBrushWidth = 8;
+            });
         }
 
         void CustomizeDefault()
-        { 
-            
+        {
+
 			// Hud.RunOnPlugin<glq.GLQ_PlayerSkillBarPlugin>(plugin => {
             // plugin.AllSkill = false;
-            // plugin.AddNames("134872");  
+            // plugin.AddNames("134872");
         // });
-			
+
 			Hud.RunOnPlugin<Gigi.PartyBuffPlugin>(plugin =>
 		{
 			ISnoPower[] onWiz = {
@@ -125,10 +206,10 @@ namespace Turbo.Plugins.User
 							};
 					plugin.DisplayOnClassExceptMe(HeroClass.Wizard, onWiz);
 
-		}); 
-			
-			
-			
+		});
+
+
+
 			// Bottom skillbar panel customization.
 
             // Hide DPS labels that are over normal skill "key" labels.
