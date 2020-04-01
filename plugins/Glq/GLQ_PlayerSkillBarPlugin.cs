@@ -57,7 +57,7 @@ namespace Turbo.Plugins.glq
             {
                 return;
             }
-            
+
             foreach (IPlayer player in Hud.Game.Players)
             {
                 currentX = XOffset;
@@ -91,14 +91,14 @@ namespace Turbo.Plugins.glq
                     {
                         DrawPlayerSkills(player);
                     }
-                } 
+                }
             }
         }
 
         private void DrawPlayerSkills(IPlayer player)
         {
             var portraitRect = player.PortraitUiElement.Rectangle;
-            var size = portraitRect.Width * 0.3f;   
+            var size = portraitRect.Width * 0.3f;
             var passivesX = portraitRect.Right * 2.12f;   // * 2.12f 회동바로옆
             YOffset = portraitRect.Height * 0.505f;  // * 0.095f 기본값  // 0.505f 회동바로옆
             foreach (var skill in player.Powers.SkillSlots)

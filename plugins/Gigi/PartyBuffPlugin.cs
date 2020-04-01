@@ -4,7 +4,7 @@ using Turbo.Plugins.Default;
 
 namespace Turbo.Plugins.Gigi
 {
- 
+
     public class PartyBuffPlugin : BasePlugin, IInGameWorldPainter, ICustomizer
     {
         public BuffPainter BuffPainter { get; set; }
@@ -19,14 +19,14 @@ namespace Turbo.Plugins.Gigi
         public float PortraitOffset { get; set; }
         public bool OthersAlwaysNextToPortrait { get; set; }
         private BuffRuleFactory buffRuleFactory;
-		
+
         public PartyBuffPlugin()
         {
             Enabled = true;
         }
-		
+
         public void Customize()
-        { 
+        {
             Hud.RunOnPlugin<PlayerBottomBuffListPlugin>(plugin => {
                 plugin.RuleCalculator.Rules.Clear();
                 plugin.Enabled = false;
@@ -34,13 +34,13 @@ namespace Turbo.Plugins.Gigi
         }
 
         public override void Load(IController hud)
-        {   
+        {
             base.Load(hud);
             buffRuleFactory = new BuffRuleFactory(hud);
             SizeMultiplier = 0.75f;
             PortraitSizeMultiplier = 0.75f;
             PositionOffset = 0.085f;  // 0.085f
-            PortraitOffset = 0.4775f; // 0.2f yValue 
+            PortraitOffset = 0.4775f; // 0.2f yValue
             Debug = false;
             OthersAlwaysNextToPortrait = true;
             Opacity = 0.85f;
@@ -79,7 +79,7 @@ namespace Turbo.Plugins.Gigi
                     if (RuleCalculatorMe.PaintInfoList.Count != 0)
                         BuffPainter.PaintHorizontalCenter(
                             RuleCalculatorMe.PaintInfoList,
-                            0, 
+                            0,
                             p.ScreenCoordinate.Y + Hud.Window.Size.Height * PositionOffset,
                             Hud.Window.Size.Width,
                             RuleCalculatorMe.StandardIconSize,
@@ -88,15 +88,15 @@ namespace Turbo.Plugins.Gigi
                 }else{
                     if (!p.CoordinateKnown) continue;
                     if (p.IsOnScreen && !OthersAlwaysNextToPortrait){
-                        RuleCalculators[p.HeroClassDefinition.HeroClass].SizeMultiplier = SizeMultiplier;            
+                        RuleCalculators[p.HeroClassDefinition.HeroClass].SizeMultiplier = SizeMultiplier;
                         RuleCalculators[p.HeroClassDefinition.HeroClass].CalculatePaintInfo(p);
                         if (RuleCalculators[p.HeroClassDefinition.HeroClass].PaintInfoList.Count != 0){
                             BuffPainter.PaintHorizontalCenter(
-                                RuleCalculators[p.HeroClassDefinition.HeroClass].PaintInfoList, 
-                                p.ScreenCoordinate.X + 10, 
-                                p.ScreenCoordinate.Y + Hud.Window.Size.Height * PositionOffset, 
-                                0, 
-                                RuleCalculators[p.HeroClassDefinition.HeroClass].StandardIconSize, 
+                                RuleCalculators[p.HeroClassDefinition.HeroClass].PaintInfoList,
+                                p.ScreenCoordinate.X + 10,
+                                p.ScreenCoordinate.Y + Hud.Window.Size.Height * PositionOffset,
+                                0,
+                                RuleCalculators[p.HeroClassDefinition.HeroClass].StandardIconSize,
                                 RuleCalculators[p.HeroClassDefinition.HeroClass].StandardIconSpacing
                             );
                         }
@@ -105,13 +105,13 @@ namespace Turbo.Plugins.Gigi
                         RuleCalculators[p.HeroClassDefinition.HeroClass].CalculatePaintInfo(p);
                         if (RuleCalculators[p.HeroClassDefinition.HeroClass].PaintInfoList.Count != 0){
                             BuffPainter.PaintHorizontal(
-                                RuleCalculators[p.HeroClassDefinition.HeroClass].PaintInfoList, 
-                                p.PortraitUiElement.Rectangle.Right * 2.1025f, 
-                                p.PortraitUiElement.Rectangle.Top + p.PortraitUiElement.Rectangle.Height * PortraitOffset, 
-                                RuleCalculators[p.HeroClassDefinition.HeroClass].StandardIconSize, 
+                                RuleCalculators[p.HeroClassDefinition.HeroClass].PaintInfoList,
+                                p.PortraitUiElement.Rectangle.Right * 2.1025f,
+                                p.PortraitUiElement.Rectangle.Top + p.PortraitUiElement.Rectangle.Height * PortraitOffset,
+                                RuleCalculators[p.HeroClassDefinition.HeroClass].StandardIconSize,
                                 0
                             );
-                        }           
+                        }
                     }
                 }
 
@@ -143,14 +143,14 @@ namespace Turbo.Plugins.Gigi
             res += b.Active.ToString() + " \t";
             res += b.SnoPower.NameLocalized + " \t";
             res += b.SnoPower.Code + " \t";
-            //res += t.SnoPower.DescriptionEnglish;   
+            //res += t.SnoPower.DescriptionEnglish;
             return res;
         }
 
         public void DisplayOnAll(params ISnoPower[] pwrs){
             foreach(HeroClass h in Enum.GetValues(typeof(HeroClass)))
                 AddPower(RuleCalculators[h], pwrs);
-            AddPower(RuleCalculatorMe, pwrs);       
+            AddPower(RuleCalculatorMe, pwrs);
         }
 
         public void DisplayOnMe(params ISnoPower[] pwrs){
@@ -159,7 +159,7 @@ namespace Turbo.Plugins.Gigi
 
         public void DisplayOnAllClassesExceptMe(params ISnoPower[] pwrs){
             foreach(HeroClass h in Enum.GetValues(typeof(HeroClass)))
-                AddPower(RuleCalculators[h], pwrs);       
+                AddPower(RuleCalculators[h], pwrs);
         }
 
         public void DisplayOnClassExceptMe(HeroClass h, params ISnoPower[] pwrs){
@@ -176,7 +176,7 @@ namespace Turbo.Plugins.Gigi
             var buffRules = buffRuleFactory.CreateBuffRules(pwr);       //ty jack!
             if (buffRules != null){
                 bf.Rules.AddRange(buffRules);
-            } 
+            }
         }
     }
 }

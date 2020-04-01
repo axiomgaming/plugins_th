@@ -27,7 +27,7 @@ namespace Turbo.Plugins.RNN
         public IKeyEvent ToggleKeyEvent3 { get; set; }  // Reposition to mouse cursor.
 
 		public bool ShowBuffsExcluded  { get; set; }
-		
+
         public Dictionary<uint, int> FixIndexSkills { get; set; }
 
         public uint[] ExcludedSnos { get; set; } = new uint[]
@@ -69,7 +69,7 @@ namespace Turbo.Plugins.RNN
             Order = 30001;
 
 			ShowBuffsExcluded = false;
-			
+
             ToggleKeyEvent1 = Hud.Input.CreateKeyEvent(true, Key.F7, controlPressed: false, altPressed: false, shiftPressed: true);
             ToggleKeyEvent2 = Hud.Input.CreateKeyEvent(true, Key.F7, controlPressed: true, altPressed: false, shiftPressed: false);
             ToggleKeyEvent3 = Hud.Input.CreateKeyEvent(true, Key.F7, controlPressed: false, altPressed: true, shiftPressed: false);
@@ -79,8 +79,8 @@ namespace Turbo.Plugins.RNN
             FuenteY = Hud.Render.CreateFont("consolas", 9f, 255, 255, 255, 0, false, false, 220, 32, 32, 32, false);
             FuenteG = Hud.Render.CreateFont("consolas", 9f, 255, 0, 255, 0, false, false, 220, 32, 32, 32, false);
 			FuenteB = Hud.Render.CreateFont("consolas", 9f, 255, 0, 128, 255, false, false, 220, 32, 32, 32, false); //FuenteB = Hud.Render.CreateFont("consolas", 9f, 255, 0, 128, 255, true, false, 220, 32, 32, 32, true);
-			
-            FixIndexSkills = new Dictionary<uint, int>	// Skill Default Index (info = 4). 
+
+            FixIndexSkills = new Dictionary<uint, int>	// Skill Default Index (info = 4).
 			{											//Por defecto se muestran los tiempos que correspondan al indice con mayor Timeleft , aquí se puede fijar un indice concreto para la habilidad
 				{79528, 0}    					// Skill Ignore Pain, use index 0 always
 			};
@@ -145,7 +145,7 @@ namespace Turbo.Plugins.RNN
             {
 				List<IBuff> powers = new List<IBuff>();
 				if (info == 4)	powers = Hud.Game.Me.Powers.AllBuffs.Where(x => ExcludedSnos.Contains(x.SnoPower.Sno)).ToList();
-				else powers = Hud.Game.Me.Powers.AllBuffs.Where(x => (x.Active || info == 1) && !ExcludedSnos.Contains(x.SnoPower.Sno)).ToList();	
+				else powers = Hud.Game.Me.Powers.AllBuffs.Where(x => (x.Active || info == 1) && !ExcludedSnos.Contains(x.SnoPower.Sno)).ToList();
                 powers.Sort((a, b) => a.SnoPower.Code.CompareTo(b.SnoPower.Code));
                 texto = "BUFFs " + ((info == 1) ? " <All> " : ((info == 2) ? " <Actives> " : ((info == 3) ? " <TimeLeft> " : " <Excluded> "))) + " (Shift+F7 = Show/Hide , Ctrl+F7 = BUFFs All/Actives/Timeleft" + (ShowBuffsExcluded? "/Excluded":"") + " and SKILLs) ";
                 var layout = FuenteW.GetTextLayout(texto);
@@ -157,9 +157,9 @@ namespace Turbo.Plugins.RNN
                 foreach (var power in powers)
                 {
                     texto = string.Format("{0:00}) {1,7}  {2,-6} {3,-37}  {4,-21}",
-						indice, 
-						power.SnoPower.Sno, 
-						power.Active, 
+						indice,
+						power.SnoPower.Sno,
+						power.Active,
 						power.SnoPower.Code,
 						(power.SnoPower.NameLocalized != null)? "(" + power.SnoPower.NameLocalized + ")":""
 						);
@@ -234,40 +234,40 @@ namespace Turbo.Plugins.RNN
                         }
                         texto = " [" + index + "] " + texto;
                     }
-                    texto = string.Format("  {0,-2} {1,8}    {7,-6}    {2,-6}   {3,-29} {4,-22} {5,3} {6,-22} {8}", 
-                        skill.Key.ToString().Replace("Skill", "").Substring(0, 1), 
+                    texto = string.Format("  {0,-2} {1,8}    {7,-6}    {2,-6}   {3,-29} {4,-22} {5,3} {6,-22} {8}",
+                        skill.Key.ToString().Replace("Skill", "").Substring(0, 1),
                         skill.CurrentSnoPower.Sno,
-                        skill.IsOnCooldown, 
-                        skill.CurrentSnoPower.Code, 
-                        "(" + skill.CurrentSnoPower.NameLocalized + ")", 
-                        skill.Rune, 
-                        "(" + skill.RuneNameLocalized + ")", 
-                        skill.BuffIsActive, 
+                        skill.IsOnCooldown,
+                        skill.CurrentSnoPower.Code,
+                        "(" + skill.CurrentSnoPower.NameLocalized + ")",
+                        skill.Rune,
+                        "(" + skill.RuneNameLocalized + ")",
+                        skill.BuffIsActive,
                         texto);
 					layout = FuenteB.GetTextLayout(texto);
                     FuenteB.DrawText(layout, xPos, yPos);
                     yPos += layout.Metrics.Height * LineHeightPC;
                     indice++;
                 }
-				
+
 				texto = "Passive    Sno              Code  (NameLocalized) ";
 				layout = FuenteW.GetTextLayout(texto);
 				yPos += layout.Metrics.Height * LineHeightPC;
                 FuenteW.DrawText(layout, xPos, yPos);
 				yPos += layout.Metrics.Height * LineHeightPC;
-				indice = 1;       
+				indice = 1;
 				foreach (var power in Hud.Game.Me.Powers.UsedPassives)
-				{				
+				{
 					texto = string.Format("{0,3}   {1,8}   {2,-40}  {3,-21}",
-						indice, 
-						power.Sno, 
+						indice,
+						power.Sno,
 						power.Code,
 						(power.NameLocalized != null)? "(" + power.NameLocalized + ")":""
 						);
 					layout = FuenteB.GetTextLayout(texto);
 					FuenteB.DrawText(layout, xPos, yPos);
 					yPos += layout.Metrics.Height * LineHeightPC;
-                    indice++;	
+                    indice++;
 				}
             }
         }

@@ -189,6 +189,18 @@ namespace Turbo.Plugins.User
               plugin.GroundG = 0;
               plugin.GroundBrushWidth = 8;
             });
+
+            Hud.RunOnPlugin<Turbo.Plugins.JarJar.DefaultUI.ArmorySetInfo>(plugin => {
+              plugin.ShowArmorySetNamesLeft = false;
+            });
+
+            // Hud.RunOnPlugin<Turbo.Plugins.glq.GLQ_PlayerSkillBarPlugin>(plugin => {
+              // plugin.Enabled = false; //not the one at the top right
+            // });
+
+            Hud.RunOnPlugin<Turbo.Plugins.RNN.BuildsIconsAndCoe>(plugin => {
+              plugin.Ypor = 0.15f;
+            });
         }
 
         void CustomizeDefault()

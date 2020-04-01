@@ -12,6 +12,10 @@ disable a plugin by finding its `.cs` file, then editing to change the one line
 that reads `Enabled = true;` to `Enabled = false;`
 
 ### Changelog
+2020-04-01: Tweaked placement of BuilsIconsAndCoe plugin (party skills at top right,
+by the minimap) to not conflict with RG skills list, removed armory listing at
+left that obscures rerolling.
+
 2020-03-30: Moved compatible config tweaks to PluginEnablerOrDisablerPlugin rather
 than direct source edits. SpiritBarragePhantasmPlugin extended to support color/size
 options.

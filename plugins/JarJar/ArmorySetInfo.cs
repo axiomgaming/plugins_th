@@ -26,7 +26,7 @@ namespace Turbo.Plugins.JarJar.DefaultUI
         public bool EquippedBorderEnabled { get; set; } = true;     // Equipped items get light (almost invisible) border if in armory and default border if not.
         public bool StashBorderEnabled { get; set; } = true;        // Armory set items in stash get red border.
         public bool InventoryBorderEnabled { get; set; } = true;    // Armory set items in inventory get teal border.
-        
+
         // Item labels (toggleable).
         public bool ShowArmorySetNumberLabels { get; set; } = true; // Show Armory Set number labels under items.
 
@@ -357,8 +357,8 @@ namespace Turbo.Plugins.JarJar.DefaultUI
 
         private bool hasSameCubePowers(IPlayer player, IPlayerArmorySet set)
         {
-            return isEqual(player.CubeSnoItem1, set.CubeSnoItem1) && 
-                isEqual(player.CubeSnoItem2, set.CubeSnoItem2) && 
+            return isEqual(player.CubeSnoItem1, set.CubeSnoItem1) &&
+                isEqual(player.CubeSnoItem2, set.CubeSnoItem2) &&
                 isEqual(player.CubeSnoItem3, set.CubeSnoItem3);
         }
 

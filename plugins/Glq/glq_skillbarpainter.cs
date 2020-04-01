@@ -32,8 +32,6 @@ namespace Turbo.Plugins.glq
             {
                 CooldownFont = Hud.Render.CreateFont("arial", 14, 255, 255, 255, 255, true, false, 255, 0, 0, 0, true);
                 TimeLeftClockBrush = Hud.Render.CreateBrush(220, 0, 0, 0, 0);
-
-
             }
         }
 
