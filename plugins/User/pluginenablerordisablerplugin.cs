@@ -145,10 +145,10 @@ namespace Turbo.Plugins.User
             // 	f)	<Popup buff>	Popup Text,			"" for not Popup,	null for not popup,
 
             	plugin.Config(ShrineType.PowerPylon,"Power","Power","Power","Power Active","Lost Power","[Power]");
-            	plugin.Config(ShrineType.ConduitPylon,"Condi","Condi","Conduit","Condi Active","Lost Conduit","[Condi]");
+            	plugin.Config(ShrineType.ConduitPylon,"Conduit","Conduit","Conduit","Conduit Active","Lost Conduit","[Conduit]");
             	plugin.Config(ShrineType.ChannelingPylon,"Channeling","Channeling","Channeling","Channeling Active","Lost Channeling","[Channeling]");
             	plugin.Config(ShrineType.ShieldPylon,"Shield","Shield","Shield","Shield Active","Lost Shield","[Shield]");
-            	plugin.Config(ShrineType.SpeedPylon,"Speed","Speed","Speed","Speed Active.... I'm fast as fuck boyeeeeeeeeee","Speed Lost... I'm slow as fuck boyeeeeeeeeee","[Speed]");
+            	plugin.Config(ShrineType.SpeedPylon,"Speed","Speed","Speed","Speed Active.... I'm fast as fuck boyeeeeeeeeee","Lost Speed... I'm slow as fuck boyeeeeeeeeee","[Speed]");
 
             	// plugin.Config(ShrineType.BlessedShrine,null,null,null,null,null,"Blessed");
             	// plugin.Config(ShrineType.EnlightenedShrine,null,null,null,null,null,"Enlightened");
