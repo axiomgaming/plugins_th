@@ -29,7 +29,7 @@ namespace Turbo.Plugins.TLHP
 	    EnableLove = true;		// Damage Circle
 	    EnableCreation = true;	// CDR Circle
 	    EnableDetermination = false;	// RCR Circle
-		EnableRegular = true;
+	  	EnableRegular = true;
 
 	    EnableInsideMarker = true;	// Additional Circle Decorator when you are in it
     }
@@ -64,7 +64,7 @@ namespace Turbo.Plugins.TLHP
                     Radius = 11.0f,
                 }
                 );
-		RegularInsideDecorator = new WorldDecoratorCollection(
+       RegularInsideDecorator = new WorldDecoratorCollection(
                 new GroundCircleDecorator(Hud)
                 {
                     Brush = Hud.Render.CreateBrush(255, 255, 255, 255, -2, SharpDX.Direct2D1.DashStyle.Dash),
@@ -76,7 +76,7 @@ namespace Turbo.Plugins.TLHP
                     Radius = 11.0f,
                 }
                 );
-		
+
 
 	    // DeterminationInsideDecorator = new WorldDecoratorCollection(
                 // new GroundCircleDecorator(Hud)
@@ -128,9 +128,9 @@ namespace Turbo.Plugins.TLHP
                     Radius = 30,
                 }
                 );
-    
-	
-	
+
+
+
 	}
 
 	public void PaintWorld(WorldLayer layer)
@@ -138,7 +138,7 @@ namespace Turbo.Plugins.TLHP
 	    if (Hud.Game.IsInTown) return;
 
 	    bool Inside = false;
-			
+
 	if (EnableLove) {
 	    var love = Hud.Game.Actors.Where(x => x.SnoActor.Sno == ActorSnoEnum._generic_proxy && x.GetAttributeValueAsInt(Hud.Sno.Attributes.Power_Buff_1_Visual_Effect_None, 483606) == 1).OrderBy(d => d.CentralXyDistanceToMe);
 	    if (EnableInsideMarker && Hud.Game.Me.Powers.BuffIsActive(483606, 2)) { Inside = true; }
@@ -170,7 +170,7 @@ namespace Turbo.Plugins.TLHP
 	}
 
 	if (EnableRegular) {
-		
+
 			var regular = Hud.Game.Actors.Where(x => x.SnoActor.Sno == ActorSnoEnum._generic_proxy && x.GetAttributeValueAsInt(Hud.Sno.Attributes.Power_Buff_1_Visual_Effect_None, Hud.Sno.SnoPowers.OculusRing.Sno) == 1);
 	    if (EnableInsideMarker && Hud.Game.Me.Powers.BuffIsActive(402461, 2)) { Inside = true; }
             foreach (var actor in regular)

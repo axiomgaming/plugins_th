@@ -246,6 +246,33 @@ namespace Turbo.Plugins.User
             //     }
             //   );
             // });
+
+            Hud.RunOnPlugin<Turbo.Plugins.TLHP.TLHP_NewOculusPlugin>(plugin => {
+                plugin.EnableLove = false; //no longer S18
+                plugin.EnableCreation = false;
+                plugin.EnableDetermination = false;
+
+                plugin.RegularDecorator = new WorldDecoratorCollection(
+                    new GroundCircleDecorator(Hud)
+                    {
+                        Brush = Hud.Render.CreateBrush(255, 255, 128, 0, -2),   //Brush = Hud.Render.CreateBrush(255, 128, 255, 0, -2),
+                        Radius = 10.0f,
+                    },
+                    new GroundLabelDecorator(Hud)
+                    {
+                        CountDownFrom = 7,
+                        TextFont = Hud.Render.CreateFont("tahoma", 11, 255, 255, 255, 255, true, false, 128, 0, 0, 0, true),  //("tahoma", 11, 255, 96, 255, 96, true, false, 128, 0, 0, 0, true),
+                    },
+                    new GroundTimerDecorator(Hud)
+                    {
+                        CountDownFrom = 7,
+                        BackgroundBrushEmpty = Hud.Render.CreateBrush(128, 0, 0, 0, 0),
+                        BackgroundBrushFill = Hud.Render.CreateBrush(200, 255, 255, 255, 0), //(200, 0, 192, 0, 0),
+                        Radius = 30,
+                    }
+                );
+
+            });
         }
 
         void CustomizeDefault()
