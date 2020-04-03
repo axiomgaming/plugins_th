@@ -77,7 +77,7 @@ namespace Turbo.Plugins.User
             Hud.TogglePlugin<ItemsPlugin>(YES);                         // Minimap markers for ancient and primal items
             Hud.TogglePlugin<PickupRangePlugin>(NOO);                   // Show pickup range under player feet
             // LabelLists
-            Hud.TogglePlugin<AttributeLabelListPlugin>(NOO);            // Skillbar miscellaneous info about skills and player attributes.
+            Hud.TogglePlugin<AttributeLabelListPlugin>(YES);            // Skillbar miscellaneous info about skills and player attributes.
             Hud.TogglePlugin<TopExperienceStatistics>(NOO);             // Paragon point statistics middle top of the screen (mouse hover to see more)
             // Minimap
             Hud.TogglePlugin<MarkerPlugin>(YES);                        // Minimap POI markers like bounty or keywarden names
