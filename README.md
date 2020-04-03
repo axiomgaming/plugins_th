@@ -12,6 +12,8 @@ disable a plugin by finding its `.cs` file, then editing to change the one line
 that reads `Enabled = true;` to `Enabled = false;`
 
 ### Changelog
+2020-04-03: Sanc color tweaked.
+
 2020-04-01: Tweaked placement of BuildsIconsAndCoe plugin (party skills at top right,
 by the minimap) to not conflict with RG skills list, removed armory listing at
 left that obscures rerolling.

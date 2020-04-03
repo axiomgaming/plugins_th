@@ -44,7 +44,7 @@ namespace Turbo.Plugins.User
             Hud.TogglePlugin<CursedEventPlugin>(YES);                   // Minimap cursed event chest marfker
             Hud.TogglePlugin<DeadBodyPlugin>(NOO);                      //
             Hud.TogglePlugin<GlobePlugin>(YES);                         // Minimap rift progression orbs and power globes
-            Hud.TogglePlugin<OculusPlugin>(NOO);                        //
+            Hud.TogglePlugin<OculusPlugin>(NOO);                        //grn oculus ring
             Hud.TogglePlugin<PortalPlugin>(YES);                        // Minimap portals to other levels
             Hud.TogglePlugin<RackPlugin>(YES);                          //
             Hud.TogglePlugin<ShrinePlugin>(YES);                        // Minimap shrine and well markers
@@ -77,7 +77,7 @@ namespace Turbo.Plugins.User
             Hud.TogglePlugin<ItemsPlugin>(YES);                         // Minimap markers for ancient and primal items
             Hud.TogglePlugin<PickupRangePlugin>(NOO);                   // Show pickup range under player feet
             // LabelLists
-            Hud.TogglePlugin<AttributeLabelListPlugin>(YES);            // Skillbar miscellaneous info about skills and player attributes.
+            Hud.TogglePlugin<AttributeLabelListPlugin>(YES);            // Skillbar miscellaneous info about skills and player attributes. Includes attack speed, etc from details
             Hud.TogglePlugin<TopExperienceStatistics>(NOO);             // Paragon point statistics middle top of the screen (mouse hover to see more)
             // Minimap
             Hud.TogglePlugin<MarkerPlugin>(YES);                        // Minimap POI markers like bounty or keywarden names
@@ -111,7 +111,7 @@ namespace Turbo.Plugins.User
             Hud.RunOnPlugin<RNN.OtherShrinePlugin>(plugin =>
             {
             	plugin.LabelHealingWells = "";		// Text on the minimap for HealingWells (null for namelocalized,"" for nothing)
-            	plugin.LabelPoolOfReflection = "XP Pool";	// Text on the minimap for pools (null for namelocalized,"" for nothing)
+            	plugin.LabelPoolOfReflection = "Pool";	// Text on the minimap for pools (null for namelocalized,"" for nothing)
             	plugin.LabelPossiblePylon = "Pylon?";	// Text for the labels of the places where possible pylons may appear
             	// plugin.LabelPylonExchange = false;	// Exchange labels on map and mini map. If it is false they will always be shown
               //
@@ -144,7 +144,7 @@ namespace Turbo.Plugins.User
             // 	e)	<TTS buff off>	Speak Text TTS,			"" for not popup,	null for not TTS,
             // 	f)	<Popup buff>	Popup Text,			"" for not Popup,	null for not popup,
 
-            	plugin.Config(ShrineType.PowerPylon,"Power","Power","Power","Power Active","Lost Power","[Power]");
+            	plugin.Config(ShrineType.PowerPylon,"Power","Power","Power","Power Active... Kole Gathar will destroy you all!","Lost Power","[Power]");
             	plugin.Config(ShrineType.ConduitPylon,"Conduit","Conduit","Conduit","Conduit Active","Lost Conduit","[Conduit]");
             	plugin.Config(ShrineType.ChannelingPylon,"Channeling","Channeling","Channeling","Channeling Active","Lost Channeling","[Channeling]");
             	plugin.Config(ShrineType.ShieldPylon,"Shield","Shield","Shield","Shield Active","Lost Shield","[Shield]");
@@ -159,7 +159,7 @@ namespace Turbo.Plugins.User
             	// plugin.Config(ShrineType.BanditShrine,null,null,"Bandit","ignored","ignored","ignored");
             });
 
-            Hud.RunOnPlugin<RNN.Materials>(plugin =>
+            Hud.RunOnPlugin<RNN.Materials>(plugin => //show crafting mats at top left next to portrait
             {
             	plugin.Xpor = 0.100f;		// Valid values: from 0 to 1
             	plugin.Ypor = 0.001f;		// Valid values: from 0 to 1
@@ -183,7 +183,7 @@ namespace Turbo.Plugins.User
           		// plugin.warning = 2.0f;		// 9.0f...0f Text will take the color yellow when it reaches this value
           	}  );
 
-            Hud.RunOnPlugin<glq.SpiritBarragePhantasmPlugin>(plugin => {
+            Hud.RunOnPlugin<glq.SpiritBarragePhantasmPlugin>(plugin => { //SB circles in pink
               plugin.GroundR = 213;
               plugin.GroundB = 255;
               plugin.GroundG = 0;
@@ -201,6 +201,51 @@ namespace Turbo.Plugins.User
             Hud.RunOnPlugin<Turbo.Plugins.RNN.BuildsIconsAndCoe>(plugin => {
               plugin.Ypor = 0.15f;
             });
+
+            Hud.RunOnPlugin<PlayerSkillPlugin>(plugin => {
+              plugin.InnerSanctuaryTempleOfProtecteionDecorator = new WorldDecoratorCollection(
+                  new GroundCircleDecorator(Hud)
+                  {
+                    //Brush = Hud.Render.CreateBrush(100, 255, 204, 0, 4),
+                      Brush = Hud.Render.CreateBrush(172, 40, 250, 40, 4),
+                      Radius = 11,
+                  },
+                  new GroundLabelDecorator(Hud)
+                  {
+                      CountDownFrom = 6,
+                      TextFont = Hud.Render.CreateFont("tahoma", 9, 255, 255, 255, 150, true, false, 128, 0, 0, 0, true),
+                  },
+                  new GroundTimerDecorator(Hud)
+                  {
+                      CountDownFrom = 6,
+                      BackgroundBrushEmpty = Hud.Render.CreateBrush(128, 0, 0, 0, 0),
+                      BackgroundBrushFill = Hud.Render.CreateBrush(200, 255, 204, 0, 0),
+                      Radius = 35,
+                  }
+              );
+            });
+
+            // Hud.RunOnPlugin<OculusPlugin>(plugin => {
+            //   plugin.Decorator = new WorldDecoratorCollection(
+            //     new GroundCircleDecorator(Hud)
+            //     {
+            //         Brush = Hud.Render.CreateBrush(255, 255, 128, 0, -2),
+            //         Radius = 10.0f,
+            //     },
+            //     new GroundLabelDecorator(Hud)
+            //     {
+            //         CountDownFrom = 7,
+            //         TextFont = Hud.Render.CreateFont("tahoma", 11, 255, 96, 255, 96, true, false, 128, 0, 0, 0, true),
+            //     },
+            //     new GroundTimerDecorator(Hud)
+            //     {
+            //         CountDownFrom = 7,
+            //         BackgroundBrushEmpty = Hud.Render.CreateBrush(128, 0, 0, 0, 0),
+            //         BackgroundBrushFill = Hud.Render.CreateBrush(200, 0, 192, 0, 0),
+            //         Radius = 30,
+            //     }
+            //   );
+            // });
         }
 
         void CustomizeDefault()

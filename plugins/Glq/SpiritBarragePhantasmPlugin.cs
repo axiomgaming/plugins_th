@@ -50,7 +50,8 @@ namespace Turbo.Plugins.glq
 				{
 					CountDownFrom = 10,
 					BackgroundBrushEmpty = Hud.Render.CreateBrush(100, 0, 0, 0, 0),
-					BackgroundBrushFill = Hud.Render.CreateBrush(GroundB, GroundR, GroundG, 255, 0),
+					//BackgroundBrushFill = Hud.Render.CreateBrush(200, 0, 128, 255, 0),
+					BackgroundBrushFill = Hud.Render.CreateBrush(200, GroundR, GroundG, GroundB, 0),
 					Radius = 25,
 				}
 			);
