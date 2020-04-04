@@ -109,7 +109,7 @@ namespace Turbo.Plugins.TLHP
                     Radius = 10.0f,
                 }
                 );
-		RegularDecorator = new WorldDecoratorCollection(
+		  RegularDecorator = new WorldDecoratorCollection(
                 new GroundCircleDecorator(Hud)
                 {
                     Brush = Hud.Render.CreateBrush(255, 255, 255, 255, -2),   //Brush = Hud.Render.CreateBrush(255, 128, 255, 0, -2),
