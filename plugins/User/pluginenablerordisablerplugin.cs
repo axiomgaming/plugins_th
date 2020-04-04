@@ -144,9 +144,9 @@ namespace Turbo.Plugins.User
             // 	e)	<TTS buff off>	Speak Text TTS,			"" for not popup,	null for not TTS,
             // 	f)	<Popup buff>	Popup Text,			"" for not Popup,	null for not popup,
 
-            	plugin.Config(ShrineType.PowerPylon,"Power","Power","Power","Power Active... Kol Guh Thar will destroy you all!","Lost Power... At least I got power... aaawwwwww","[Power]");
-            	plugin.Config(ShrineType.ConduitPylon,"Conduit","Conduit","Conduit","Conduit Active","Lost Conduit","[Conduit]");
-            	plugin.Config(ShrineType.ChannelingPylon,"Channeling","Channeling","Channeling","Channeling Active","Lost Channeling","[Channeling]");
+            	plugin.Config(ShrineType.PowerPylon,"Power","Power","Power","Power Active... Kol Gothor will destroy you all!","Lost Power","[Power]");
+            	plugin.Config(ShrineType.ConduitPylon,"Conduit","Conduit","Conduit","Conduit Active..","Lost Conduit...","[Conduit]");
+            	plugin.Config(ShrineType.ChannelingPylon,"Channeling","Channeling","Channeling","Channeling Active","Lost Channeling... Bye Coco","[Channeling]");
             	plugin.Config(ShrineType.ShieldPylon,"Shield","Shield","Shield... Grab the fucking shield","Shield Active","Lost Shield","[Shield]");
             	plugin.Config(ShrineType.SpeedPylon,"Speed","Speed","Speed","Speed Active.... I'm fast as fuck boyeeeeeeeeee","Lost Speed... I'm slow as fuck boyeeeeeeeeee","[Speed]");
 
