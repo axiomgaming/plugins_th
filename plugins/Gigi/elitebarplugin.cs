@@ -9,7 +9,7 @@ namespace Turbo.Plugins.Gigi
 {
     public class EliteBarPlugin : BasePlugin, IInGameWorldPainter
     {
-	public WorldDecoratorCollection HitBoxDecorator { get; set; }                    
+	public WorldDecoratorCollection HitBoxDecorator { get; set; }
         public IFont LightFont { get; set; }
         public IFont RedFont { get; set; }
 		public IFont BlueFont { get; set; }
@@ -46,30 +46,30 @@ namespace Turbo.Plugins.Gigi
  	public IFont BlancoFontA { get; set; }
  	public IFont NaranjaFontA { get; set; }
  	public IFont AmarilloFontA { get; set; }
- 	public IFont RojoFontA { get; set; } 
- 	public IFont JugFontA { get; set; } 
- 	public IFont MoradoFontA { get; set; }  
- 	public IFont MarronFontA { get; set; }  
- 	public IFont GrisFontA { get; set; }  
- 	public IFont AzulFontA { get; set; }  
- 	public IFont AzulFFontA { get; set; }  
- 	public IFont VerdeFontA { get; set; }  
- 	public IFont VerdeCFontA { get; set; } 
-	public IFont TeleportFontA { get; set; } 
-	public IFont HordaFontA { get; set; } 
-	
-    public IFont ColorA { get; set; } 
- 
+ 	public IFont RojoFontA { get; set; }
+ 	public IFont JugFontA { get; set; }
+ 	public IFont MoradoFontA { get; set; }
+ 	public IFont MarronFontA { get; set; }
+ 	public IFont GrisFontA { get; set; }
+ 	public IFont AzulFontA { get; set; }
+ 	public IFont AzulFFontA { get; set; }
+ 	public IFont VerdeFontA { get; set; }
+ 	public IFont VerdeCFontA { get; set; }
+	public IFont TeleportFontA { get; set; }
+	public IFont HordaFontA { get; set; }
+
+    public IFont ColorA { get; set; }
+
         public EliteBarPlugin()
         {
             Enabled = true;
 
         }
- 
+
         public override void Load(IController hud)
         {
             base.Load(hud);
-            
+
             //Configuration
             MissingHighlight = true;
             JuggernautHighlight = true;
@@ -77,16 +77,16 @@ namespace Turbo.Plugins.Gigi
             ShowMonsterType = true;
 			CircleNonIllusion = false;
             ShowRareMinions = false;
-			ShowBossHitBox = false; 
+			ShowBossHitBox = false;
             ShowDebuffAndCC = true;
-			
+
             XScaling = 0.8f;
             YScaling = 1.15f;
             PercentageDescriptor = "0.00";
             XPos = Hud.Window.Size.Width * 0.125f;
             YPos = Hud.Window.Size.Height * 0.0333f;
             DisplayAffix = new Dictionary<MonsterAffix, string>();
-			
+
             OnlyGR = false;
 			ShowCurses = true;
 
@@ -121,7 +121,7 @@ namespace Turbo.Plugins.Gigi
 		TeleportFontA = Hud.Render.CreateFont("tahoma", 7f, 220, 100, 250, 250, false, false, true);
 		HordaFontA = Hud.Render.CreateFont("tahoma", 7f, 220, 140, 80, 200, false, false, true);
 
-            
+
             //HitBoxDecorator for Bosses and NonClone-Illusionist
             HitBoxDecorator = new WorldDecoratorCollection(
 				new GroundCircleDecorator(Hud) {
@@ -129,18 +129,18 @@ namespace Turbo.Plugins.Gigi
                     Radius = -1
                 }
             );
-        }	
+        }
 
 		private float AfijosColores (MonsterAffix afijo, float coordx, float coordy)  {
 
-			ColorA = null ; 
+			ColorA = null ;
 			switch (afijo)  {
 
                 case MonsterAffix.Frozen:
 						ColorA = LightFont ;
 						break;
                 case MonsterAffix.FrozenPulse:
-						ColorA = LightFont; 
+						ColorA = LightFont;
 						break;
 				case MonsterAffix.Wormhole:
 						ColorA = NaranjaFontA;
@@ -153,54 +153,54 @@ namespace Turbo.Plugins.Gigi
                         break;
                 case MonsterAffix.Waller:
 						ColorA = MarronFontA;
-						break; 
+						break;
                 case MonsterAffix.Arcane:
 						ColorA = MoradoFontA;
-						break; 
-                case MonsterAffix.HealthLink: 
+						break;
+                case MonsterAffix.HealthLink:
 						ColorA = AzulFontA;
-						break; 
+						break;
 				case MonsterAffix.Thunderstorm:
 						ColorA = AzulFFontA;
-						break; 
-				case MonsterAffix.Shielding:  
+						break;
+				case MonsterAffix.Shielding:
 						ColorA = AmarilloFontA;
 						break;
-				case MonsterAffix.Desecrator: 
+				case MonsterAffix.Desecrator:
 						ColorA = RojoFontA;
-						break; 
-                case MonsterAffix.Molten: 
+						break;
+                case MonsterAffix.Molten:
 						ColorA = RojoFontA;
-						break; 
+						break;
 				case MonsterAffix.FireChains:
 						ColorA = RojoFontA;
-						break; 
+						break;
 				case MonsterAffix.Teleporter:
 						ColorA = TeleportFontA;
-						break; 
+						break;
 				case MonsterAffix.Mortar:
 						ColorA = GrisFontA;
-						break; 
+						break;
 				case MonsterAffix.Poison:
 						ColorA = VerdeFontA;
-						break; 
+						break;
 				case MonsterAffix.Plagued:
 						ColorA = VerdeFontA;
-						break; 
+						break;
 				case MonsterAffix.Horde:
 						ColorA = HordaFontA;
-						break; 
+						break;
 				default:
 						ColorA = LightFont;
 						break;
 
                 }
            var d = ColorA.GetTextLayout(DisplayAffix[afijo]);
-           ColorA.DrawText(d, coordx, coordy); 
+           ColorA.DrawText(d, coordx, coordy);
            return (coordx + LightFont.GetTextLayout("-").Metrics.Width + d.Metrics.Width) ;
 
         }
-		
+
         private void DrawHealthBar(WorldLayer layer, IMonster m, ref float yref){
             if (m.Rarity == ActorRarity.RareMinion && !ShowRareMinions) return;     //no minions
             if (m.SummonerAcdDynamicId != 0) return;                                //no clones
@@ -262,11 +262,11 @@ namespace Turbo.Plugins.Gigi
             //Circle Non-Clones and Boss
             if (CircleNonIllusion && m.SummonerAcdDynamicId == 0 && HasAffix(m, MonsterAffix.Illusionist) || m.Rarity == ActorRarity.Boss && ShowBossHitBox)
                     HitBoxDecorator.Paint(layer, m, m.FloorCoordinate, string.Empty);
-            
+
             string d = string.Empty;
 			//Show Debuffs on Monster
-            if (ShowDebuffAndCC){            
-                string textDebuff = null; 
+            if (ShowDebuffAndCC){
+                string textDebuff = null;
                 //if (m.Locust) textDebuff += (textDebuff == null ? "" : ", ") + "Locust";
                 //if (m.Palmed) textDebuff += (textDebuff == null ? "" : ", ") + "Palm";
                 //if (m.Haunted) textDebuff += (textDebuff == null ? "" : ", ") + "Haunt";
@@ -282,17 +282,17 @@ namespace Turbo.Plugins.Gigi
                 if (m.Invulnerable) textCC += (textCC == null ? "" : ", ") + "Invulnerable";
                 if (m.Blind) textCC += (textCC == null ? "" : ", ") + "Blind";
 				if (textDebuff != null) { d = textDebuff; }
-				if (textCC != null) { d += ((d != string.Empty)? " | ":"") + textCC ; }		
-				
+				if (textCC != null) { d += ((d != string.Empty)? " | ":"") + textCC ; }
+
             }
 			if (ShowCurses) {
 					string Curses = null;
 					if (m.GetAttributeValue(Hud.Sno.Attributes.Power_Buff_2_Visual_Effect_None, 471845) == 1) //471845 1 power: Frailty
-						Curses += (Curses == null ? "" : " ") + "저주"; 
+						Curses += (Curses == null ? "" : " ") + "Cursed"; //Curses += (Curses == null ? "" : " ") + "저주"; 
 					//if (m.GetAttributeValue(Hud.Sno.Attributes.Power_Buff_2_Visual_Effect_None, 471869) == 1)  //471869 1 power: Leech
-						//Curses += (Curses == null ? "" : " ") + "L";  
+						//Curses += (Curses == null ? "" : " ") + "L";
 					// if (m.GetAttributeValue(Hud.Sno.Attributes.Power_Buff_2_Visual_Effect_None, 471738) == 1) //471738 1 power: Decrepify
-						// Curses += (Curses == null ? "" : " ") + ""; 	
+						// Curses += (Curses == null ? "" : " ") + "";
 					if (Curses != null) { d += ((d != string.Empty)? " | ":"") + Curses ; }
 			}
 			if (d != string.Empty) { LightFont.DrawText(LightFont.GetTextLayout(d), XPos + 65 + w2, y - py); }
@@ -302,7 +302,7 @@ namespace Turbo.Plugins.Gigi
             BorderBrush.DrawRectangle(XPos, y, w2, h);
             cBrush.DrawRectangle(XPos, y, (float)w, h);
             LightFont.DrawText(per, XPos + 8 + w2, y - py);
-            
+
             //Draw MonsterType
             if (ShowMonsterType){
                 var name = cFont.GetTextLayout(m.SnoMonster.NameLocalized);
@@ -317,17 +317,17 @@ namespace Turbo.Plugins.Gigi
             //Check if any affixes are wished to be displayed
             bool elitevivo = false;
             foreach(IMonster m in p.MonstersAlive) {
-                 if ((m.Rarity == ActorRarity.Rare) || (m.Rarity == ActorRarity.Champion) ) { elitevivo = true; } 
+                 if ((m.Rarity == ActorRarity.Rare) || (m.Rarity == ActorRarity.Champion) ) { elitevivo = true; }
              }
 
             if (elitevivo || ShowRareMinions) {
             	if (DisplayAffix.Any() ){
-                    var y = YPos + py * 8 * yref;  var despl = XPos; bool conafijos = false ;                                                                                          
+                    var y = YPos + py * 8 * yref;  var despl = XPos; bool conafijos = false ;
              	       foreach(ISnoMonsterAffix afx in p.AffixSnoList) {        //iterate affix list
                	           if (DisplayAffix.Keys.Contains(afx.Affix))          //if affix is an key
               	              despl = AfijosColores (afx.Affix, despl , y - py); conafijos = true ;
               	       }
-                    if (conafijos)  yref += 1.0f;              	   
+                    if (conafijos)  yref += 1.0f;
             	}
            	 //iterate all alive monsters of pack and print healthbars
            	 foreach(IMonster m in p.MonstersAlive)
@@ -362,5 +362,5 @@ namespace Turbo.Plugins.Gigi
             }
 		}
     }
- 
+
 }
