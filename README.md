@@ -11,7 +11,13 @@ Removing a plugin's `.cs` file will remove it entirely, but you can also typical
 disable a plugin by finding its `.cs` file, then editing to change the one line
 that reads `Enabled = true;` to `Enabled = false;`
 
+You can avoid editing the script's plugin definition file itself by disabling it
+via PluginEnablerOrDisablerPlugin.cs instead, which is technically more elegant
+but requires more finicky syntax.
+
 ### Changelog
+2020-04-09: Preliminary stricken stack rate counter, map names more fun.
+
 2020-04-03: Sanc, oculus colors tweaked.
 
 2020-04-01: Tweaked placement of BuildsIconsAndCoe plugin (party skills at top right,
@@ -31,4 +37,4 @@ skill bars).
 
 2020-03-28: Created git repo.
 - Player health arcs showing health/resource/shield at feet.
-- Materials widget at top right.
+- Materials widget at top left.

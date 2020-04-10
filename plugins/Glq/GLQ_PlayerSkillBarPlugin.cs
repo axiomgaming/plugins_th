@@ -22,7 +22,7 @@ namespace Turbo.Plugins.glq
         public GLQ_PlayerSkillBarPlugin()
         {
             Enabled = true;
-            Wizard = true;
+            Wizard = false;
             WitchDoctor = false;
             Barbarian = false;
             DemonHunter = false;

@@ -164,7 +164,7 @@ namespace Turbo.Plugins.Zy
             { "Brood Hatchling", "Crazed Summoner", "Dark Conjurer", "Fallen", "Fallen Firemage", "Fallen Shaman", "Fallen Slavelord", "Frenzied Hellion",
                 "Herald of Pestilence", "Quill Fiend", "Skeletal Ranger", "Soul Ripper", "Subjugator", "Unburied", "Vicious Ghoul", "Vicious Hellion"}),
 
-            new MonsterSet("Armored Destroyer", new List<string>
+            new MonsterSet("Chickens Bok Bok", new List<string>
             { "Anarch", "Armored Destroyer", "Blood Clan Warrior", "Canine Bones", "Corpse Raiser", "Demonic Hellflyer", "Demon Trooper", "Hungering Bones", "Morlu Incinerator",
                 "Plague Carrier", "Risen Bones", "Sand Wasp", "Shade Stalker", "Skeletal Beast", "Spitting Bones", "Terror Demon", "Vile Bat", "Winged Assassin"}),
 

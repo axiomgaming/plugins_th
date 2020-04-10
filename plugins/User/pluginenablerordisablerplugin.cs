@@ -103,6 +103,7 @@ namespace Turbo.Plugins.User
             Hud.TogglePlugin<OriginalHealthPotionSkillPlugin>(YES);     // Skillbar health potion cooldown timer
             Hud.TogglePlugin<OriginalSkillBarPlugin>(YES);              // Skillbar player skill cooldowns etc.
             Hud.TogglePlugin<UiHiddenPlayerSkillBarPlugin>(NOO);	    //
+            // Hud.TogglePlugin<Turbo.Plugins.TLHP.TLHP_BaneOfTheStrickenAndNecromancerRGKSongPlugin>(NOO);
         }
 
         void CustomizeSpecial()
@@ -272,6 +273,10 @@ namespace Turbo.Plugins.User
                     }
                 );
 
+            });
+
+            Hud.RunOnPlugin<Turbo.Plugins.LiveStats.LiveStatsPlugin>(plugin => {
+              plugin.LockPinInCombat = true;
             });
         }
 
