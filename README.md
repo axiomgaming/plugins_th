@@ -16,7 +16,8 @@ via PluginEnablerOrDisablerPlugin.cs instead, which is technically more elegant
 but requires more finicky syntax.
 
 ### Changelog
-2020-04-09: Preliminary stricken stack rate counter, map names more fun.
+2020-04-09: Preliminary stricken stack rate counter, map names more fun, live stats
+won't pin in combat by default.
 
 2020-04-03: Sanc, oculus colors tweaked.
 
