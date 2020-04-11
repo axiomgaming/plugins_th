@@ -38,7 +38,7 @@ private double[] CurStackRate {
 private long[] LastUpdate {
   get; set;
 }
-public boolean EnableLastRate {
+public bool EnableLastRate {
   get; set;
 } = true;
 private bool[] cooling {
@@ -536,10 +536,13 @@ private void DoDraw(IPlayer player) {
 }
 
 private void DrawLastRate(IPlayer player) {
-  // if (Hud.Render.UiHidden)
-  //     return;
-  // if (!Hud.Game.IsInGame)
-  //     return;
+  if (Hud.Render.UiHidden)
+      return;
+  if (!Hud.Game.IsInGame)
+      return;
+  if (player.Powers.GetBuff(Hud.Sno.SnoPowers.BaneOfTheStrickenPrimary.Sno) == null) {//!player.Powers.GetBuff(Hud.Sno.SnoPowers.BaneOfTheStrickenPrimary.Sno).Active) {
+     return;
+  }
   if (!EnableLastRate) return;
   var portrait = player.PortraitUiElement.Rectangle;
   var index = player.PortraitIndex;
@@ -547,14 +550,15 @@ private void DrawLastRate(IPlayer player) {
     LastStackRate[index] = CurStackRate[index];
   }
   StackCountDecorator.TextFunc = () => {
-    return "Last: "+String.Format("{0:0.00}",LastStackRate[index]);
+    return "Last:\n"+String.Format("{0:0.00}",LastStackRate[index]);
   };
-  // var x = 802f;
-  // var y = 67.5f;
-  var x = portrait.Left + portrait.Width * 2.7f;
-  var y = portrait.Top + portrait.Height / 3;
-  var w = 60f;
-  var h = 60f;
+  //bottom left
+  // var x = portrait.Left - 9f;
+  // var y = portrait.Top + portrait.Height - 28f;
+  var x = portrait.Left + portrait.Width + 2f;
+  var y = portrait.Top + 10f;
+  var w = 32f;
+  var h = 32f;
   var rect = new RectangleF(x,
                             y,
                             w,
