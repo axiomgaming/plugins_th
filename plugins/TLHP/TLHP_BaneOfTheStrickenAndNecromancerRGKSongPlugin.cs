@@ -26,6 +26,21 @@ private int[] StackCount {
 private long[] StackStart { //one per player. Ticks, in nanos IIRC
         get; set;
 }
+private double[] LastStackRate {
+        get; set;
+}
+private double[] StackSessionCount { //todo: avg rates over session
+        get; set;
+}
+private double[] CurStackRate {
+        get; set;
+}
+private long[] LastUpdate {
+  get; set;
+}
+public boolean EnableLastRate {
+  get; set;
+} = true;
 private bool[] cooling {
         get; set;
 }
@@ -152,6 +167,16 @@ public override void Load(IController hud)
 
         StackCount = new int[4];
         StackStart = new long[4];
+        LastStackRate = new double[4];
+        StackSessionCount = new double[4];
+        LastUpdate = new long[4];
+        CurStackRate = new double[4];
+        for (int i = 0; i < 4; i++) {
+          LastStackRate[i] = 0;
+          StackSessionCount[i] = 0;
+          LastUpdate[i] = 0;
+          CurStackRate[i] = 0;
+        }
         cooling = new bool[4];
         Key = SharpDX.DirectInput.Key.NumberPad1;
         Key2 = SharpDX.DirectInput.Key.NumberPad2;
@@ -428,9 +453,13 @@ public void OnKeyEvent(IKeyEvent keyEvent)
 
 public void DrawStackCount(IPlayer player)
 {
-        if (!player.Powers.BuffIsActive(Hud.Sno.SnoPowers.BaneOfTheStrickenPrimary.Sno, 0)) return;
+        DrawLastRate(player);
         int count = Hud.Game.AliveMonsters.Count(m => m.SnoMonster.Priority == MonsterPriority.boss);
         if (count == 0) return;
+
+        if (!player.Powers.BuffIsActive(Hud.Sno.SnoPowers.BaneOfTheStrickenPrimary.Sno, 0)) {
+           return;
+        }
 
         var uiBar = Hud.Render.MonsterHpBarUiElement;
         var monster = Hud.Game.SelectedMonster2 ?? Hud.Game.SelectedMonster1;
@@ -444,15 +473,6 @@ public void DrawStackCount(IPlayer player)
         rng = new Random(Hud.Game.CurrentGameTick);
         HitnRng = rng.Next(1, _count);
 
-        var w = uiBar.Rectangle.Height * 2;
-        var h = uiBar.Rectangle.Height;
-        var x = uiBar.Rectangle.Right + uiBar.Rectangle.Height * 5;
-        var y = uiBar.Rectangle.Y + uiBar.Rectangle.Height * 0.2f; //0.3f
-
-        var bgTex = Hud.Texture.GetTexture(3166997520);
-        var tex = Hud.Texture.GetItemTexture(Hud.Sno.SnoItems.Unique_Gem_018_x1);
-        var rect = new RectangleF(uiBar.Rectangle.Right + uiBar.Rectangle.Height * 5f + xPos, uiBar.Rectangle.Y - uiBar.Rectangle.Height * 1.5f / 6, uiBar.Rectangle.Height * 1.5f, uiBar.Rectangle.Height * 1.5f);
-
         var index = player.PortraitIndex;
         if (player.Powers.BuffIsActive(Hud.Sno.SnoPowers.BaneOfTheStrickenPrimary.Sno, 2))
         {
@@ -462,32 +482,90 @@ public void DrawStackCount(IPlayer player)
                         if(HitnRng == 1) {
                           if (StackCount[index] == 0) {
                             StackStart[index] = DateTime.Now.Ticks;
+                            StackSessionCount[index]++;
                           }
                           StackCount[index]++;
+                          LastUpdate[index] = DateTime.Now.Ticks;
                         }
                 }
-        }
-        else
-        {
+        } else {
                 cooling[index] = false;
         }
+        DoDraw(player);
+}
 
+private void DoDraw(IPlayer player) {
+        var uiBar = Hud.Render.MonsterHpBarUiElement;
+        if (uiBar == null) {
+          return;
+        }
+        var w = uiBar.Rectangle.Height * 2;
+        var h = uiBar.Rectangle.Height;
+        var x = uiBar.Rectangle.Right + uiBar.Rectangle.Height * 5;
+        var y = uiBar.Rectangle.Y + uiBar.Rectangle.Height * 0.2f; //0.3f
+
+        var bgTex = Hud.Texture.GetTexture(3166997520);
+        var tex = Hud.Texture.GetItemTexture(Hud.Sno.SnoItems.Unique_Gem_018_x1);
+        var rX = uiBar.Rectangle.Right + uiBar.Rectangle.Height * 5f + xPos;
+        var rY = uiBar.Rectangle.Y - uiBar.Rectangle.Height * 1.5f / 6;
+        var rW = uiBar.Rectangle.Height * 1.5f;
+        var rect = new RectangleF(rX,
+                                  rY,
+                                  rW,
+                                  rW);
+        var index = player.PortraitIndex;
         StackCountDecorator.TextFunc = () => {
           double elapsed = (double)(DateTime.Now.Ticks - StackStart[index]) / 10000000.0;
-          double rate = (double)(StackCount[index]) / elapsed;
-          return StackCount[index].ToString() + "\n" + String.Format("{0:0.00}",rate) + "/s elapsed "+String.Format("{0:0.00}",elapsed);
+          CurStackRate[index] = (double)(StackCount[index]) / elapsed;
+          // double rate = (double)(StackCount[index]) / elapsed;
+          String rateMsg = String.Format("{0:0.00}",CurStackRate[index]) + "/s";
+          String msg = StackCount[index].ToString() + "\n";
+          msg += rateMsg;
+          return msg;
         };
         StackBrush.DrawRectangle(rect);
         bgTex.Draw(rect.Left, rect.Top, rect.Width, rect.Height);
         tex.Draw(rect.Left, rect.Top, rect.Width, rect.Height);
-        var layout = ClassFont.GetTextLayout(player.BattleTagAbovePortrait + "\n(" + classShorts[player.HeroClassDefinition.HeroClass] + ")");
-
         if (DrawClassOnIcons || Hud.Window.CursorInsideRect(rect.X, rect.Y, rect.Width, rect.Height))
         {
+                var layout = ClassFont.GetTextLayout(player.BattleTagAbovePortrait + "\n(" + classShorts[player.HeroClassDefinition.HeroClass] + ")");
                 ClassFont.DrawText(layout, x - (layout.Metrics.Width * 0.1f) + xPos, y - h * 3);
         }
         StackCountDecorator.Paint(x + xPos, y, w, h, HorizontalAlign.Center);
         xPos += rect.Width + h;
+}
+
+private void DrawLastRate(IPlayer player) {
+  // if (Hud.Render.UiHidden)
+  //     return;
+  // if (!Hud.Game.IsInGame)
+  //     return;
+  if (!EnableLastRate) return;
+  var portrait = player.PortraitUiElement.Rectangle;
+  var index = player.PortraitIndex;
+  if (LastUpdate[index] > 0 && DateTime.Now.Ticks - LastUpdate[index] > 80000000.0) {
+    LastStackRate[index] = CurStackRate[index];
+  }
+  StackCountDecorator.TextFunc = () => {
+    return "Last: "+String.Format("{0:0.00}",LastStackRate[index]);
+  };
+  // var x = 802f;
+  // var y = 67.5f;
+  var x = portrait.Left + portrait.Width * 2.7f;
+  var y = portrait.Top + portrait.Height / 3;
+  var w = 60f;
+  var h = 60f;
+  var rect = new RectangleF(x,
+                            y,
+                            w,
+                            h);
+  var bgTex = Hud.Texture.GetTexture(3166997520);
+  var tex = Hud.Texture.GetItemTexture(Hud.Sno.SnoItems.Unique_Gem_018_x1);
+
+  StackBrush.DrawRectangle(rect);
+  bgTex.Draw(rect.Left, rect.Top, rect.Width, rect.Height);
+  tex.Draw(rect.Left, rect.Top, rect.Width, rect.Height);
+  StackCountDecorator.Paint(x, y, w, h, HorizontalAlign.Center);
 }
 
 public void PaintTopInGame(ClipState clipState)
@@ -503,7 +581,7 @@ public void PaintTopInGame(ClipState clipState)
                         StackStart[i] = 0;
                 }
                 bossIsAlive = false;
-                return;
+                //return;
         }
 
         foreach (IPlayer player in Hud.Game.Players)
