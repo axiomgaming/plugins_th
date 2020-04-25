@@ -27,7 +27,7 @@ namespace Turbo.Plugins.User
         void SetupPlugins()
         {
             Hud.TogglePlugin<BountyTablePlugin>(YES);                   // F6 for bountry summary table
-            Hud.TogglePlugin<DamageBonusPlugin>(NOO);
+            Hud.TogglePlugin<DamageBonusPlugin>(YES);
             Hud.TogglePlugin<DebugPlugin>(NOO);
             Hud.TogglePlugin<ExperienceOverBarPlugin>(NOO);             // Skillbar experience gained and pool bonus
             Hud.TogglePlugin<GameInfoPlugin>(YES);

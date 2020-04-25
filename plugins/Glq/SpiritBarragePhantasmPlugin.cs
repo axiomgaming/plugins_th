@@ -13,6 +13,7 @@ namespace Turbo.Plugins.glq
 		public int GroundG { get; set; }
 		public int GroundB { get; set; }
 		public int GroundBrushWidth { get; set; }
+		public int GroundBrushOpacity { get; set; }
 
 		public SpiritBarragePhantasmPlugin()
 		{
@@ -26,6 +27,7 @@ namespace Turbo.Plugins.glq
 			GroundB = 255;
 			GroundG = 128;
 			GroundBrushWidth = 2;
+			GroundBrushOpacity = 192;
 
 			ShowOthers = true; // also show those of other players.
 		}
@@ -38,7 +40,7 @@ namespace Turbo.Plugins.glq
 				{
 					//B=255, R= 0, G=128 originally; now pink = 255/213/0
 					// Brush = Hud.Render.CreateBrush(255, 213, 0, 255, 8),
-					Brush = Hud.Render.CreateBrush(GroundB, GroundR, GroundG, 255, GroundBrushWidth),
+					Brush = Hud.Render.CreateBrush(GroundB, GroundR, GroundG, GroundBrushOpacity, GroundBrushWidth),
 					Radius = 10,
 				},
 				new GroundLabelDecorator(Hud)

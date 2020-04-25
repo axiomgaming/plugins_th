@@ -36,11 +36,11 @@ private double[] CurStackRate {
         get; set;
 }
 private long[] LastUpdate {
-  get; set;
+        get; set;
 }
 public bool EnableLastRate {
-  get; set;
-} = true;
+        get; set;
+}
 private bool[] cooling {
         get; set;
 }
@@ -102,6 +102,7 @@ public SharpDX.DirectInput.Key Key11 {
 
 
 private readonly int[] _skillOrder = { 2, 3, 4, 5, 0, 1 };
+private readonly double _ticksPerSecond = 10000000.0;
 //bool LotDOnCooldown = false;
 bool LotDBuffActive = false;
 bool LotDBuffDiminish = false;
@@ -153,6 +154,7 @@ public TLHP_BaneOfTheStrickenAndNecromancerRGKSongPlugin()
         Dead = false;
         CheatDeath = false;
         DrawClassOnIcons = false;
+        EnableLastRate = true;
 }
 
 public override void Load(IController hud)
@@ -172,10 +174,10 @@ public override void Load(IController hud)
         LastUpdate = new long[4];
         CurStackRate = new double[4];
         for (int i = 0; i < 4; i++) {
-          LastStackRate[i] = 0;
-          StackSessionCount[i] = 0;
-          LastUpdate[i] = 0;
-          CurStackRate[i] = 0;
+                LastStackRate[i] = 0;
+                StackSessionCount[i] = 0;
+                LastUpdate[i] = 0;
+                CurStackRate[i] = 0;
         }
         cooling = new bool[4];
         Key = SharpDX.DirectInput.Key.NumberPad1;
@@ -458,7 +460,7 @@ public void DrawStackCount(IPlayer player)
         if (count == 0) return;
 
         if (!player.Powers.BuffIsActive(Hud.Sno.SnoPowers.BaneOfTheStrickenPrimary.Sno, 0)) {
-           return;
+                return;
         }
 
         var uiBar = Hud.Render.MonsterHpBarUiElement;
@@ -480,12 +482,12 @@ public void DrawStackCount(IPlayer player)
                 {
                         cooling[index] = true;
                         if(HitnRng == 1) {
-                          if (StackCount[index] == 0) {
-                            StackStart[index] = DateTime.Now.Ticks;
-                            StackSessionCount[index]++;
-                          }
-                          StackCount[index]++;
-                          LastUpdate[index] = DateTime.Now.Ticks;
+                                if (StackCount[index] == 0) {
+                                        StackStart[index] = DateTime.Now.Ticks;
+                                        StackSessionCount[index]++;
+                                }
+                                StackCount[index]++;
+                                LastUpdate[index] = DateTime.Now.Ticks;
                         }
                 }
         } else {
@@ -497,7 +499,7 @@ public void DrawStackCount(IPlayer player)
 private void DoDraw(IPlayer player) {
         var uiBar = Hud.Render.MonsterHpBarUiElement;
         if (uiBar == null) {
-          return;
+                return;
         }
         var w = uiBar.Rectangle.Height * 2;
         var h = uiBar.Rectangle.Height;
@@ -515,13 +517,10 @@ private void DoDraw(IPlayer player) {
                                   rW);
         var index = player.PortraitIndex;
         StackCountDecorator.TextFunc = () => {
-          double elapsed = (double)(DateTime.Now.Ticks - StackStart[index]) / 10000000.0;
-          CurStackRate[index] = (double)(StackCount[index]) / elapsed;
-          // double rate = (double)(StackCount[index]) / elapsed;
-          String rateMsg = String.Format("{0:0.00}",CurStackRate[index]) + "/s";
-          String msg = StackCount[index].ToString() + "\n";
-          msg += rateMsg;
-          return msg;
+                double elapsed = (double)(DateTime.Now.Ticks - StackStart[index]) / _ticksPerSecond;
+                CurStackRate[index] = (double)(StackCount[index]) / elapsed;
+                // double rate = (double)(StackCount[index]) / elapsed;
+                return StackCount[index].ToString() + "\n" + String.Format("{0:0.00}",CurStackRate[index]) + "/s";
         };
         StackBrush.DrawRectangle(rect);
         bgTex.Draw(rect.Left, rect.Top, rect.Width, rect.Height);
@@ -536,40 +535,40 @@ private void DoDraw(IPlayer player) {
 }
 
 private void DrawLastRate(IPlayer player) {
-  if (Hud.Render.UiHidden)
-      return;
-  if (!Hud.Game.IsInGame)
-      return;
-  if (player.Powers.GetBuff(Hud.Sno.SnoPowers.BaneOfTheStrickenPrimary.Sno) == null) {//!player.Powers.GetBuff(Hud.Sno.SnoPowers.BaneOfTheStrickenPrimary.Sno).Active) {
-     return;
-  }
-  if (!EnableLastRate) return;
-  var portrait = player.PortraitUiElement.Rectangle;
-  var index = player.PortraitIndex;
-  if (LastUpdate[index] > 0 && DateTime.Now.Ticks - LastUpdate[index] > 80000000.0) {
-    LastStackRate[index] = CurStackRate[index];
-  }
-  StackCountDecorator.TextFunc = () => {
-    return "Last:\n"+String.Format("{0:0.00}",LastStackRate[index]);
-  };
-  //bottom left
-  // var x = portrait.Left - 9f;
-  // var y = portrait.Top + portrait.Height - 28f;
-  var x = portrait.Left + portrait.Width + 2f;
-  var y = portrait.Top + 10f;
-  var w = 32f;
-  var h = 32f;
-  var rect = new RectangleF(x,
-                            y,
-                            w,
-                            h);
-  var bgTex = Hud.Texture.GetTexture(3166997520);
-  var tex = Hud.Texture.GetItemTexture(Hud.Sno.SnoItems.Unique_Gem_018_x1);
+        if (!EnableLastRate) return;
+        if (Hud.Render.UiHidden)
+                return;
+        if (!Hud.Game.IsInGame)
+                return;
+        if (player.Powers.UsedLegendaryGems.BaneOfTheStrickenPrimary == null || !player.Powers.UsedLegendaryGems.BaneOfTheStrickenPrimary.Active) {
+                return;
+        }
+        var portrait = player.PortraitUiElement.Rectangle;
+        var index = player.PortraitIndex;
+        if (LastUpdate[index] > 0 && CurStackRate[index] > 0 && DateTime.Now.Ticks - LastUpdate[index] > 8 * _ticksPerSecond) {
+                LastStackRate[index] = CurStackRate[index];
+        }
+        StackCountDecorator.TextFunc = () => {
+                return "Last:\n"+String.Format("{0:0.00}",LastStackRate[index]);
+        };
+        //bottom left
+        // var x = portrait.Left - 9f;
+        // var y = portrait.Top + portrait.Height - 28f;
+        var x = portrait.Left + portrait.Width + (0.05f * portrait.Width);
+        var y = portrait.Top + (0.1f * portrait.Height);
+        var w = 32f;
+        var h = 32f;
+        var rect = new RectangleF(x,
+                                  y,
+                                  w,
+                                  h);
+        var bgTex = Hud.Texture.GetTexture(3166997520);
+        var tex = Hud.Texture.GetItemTexture(Hud.Sno.SnoItems.Unique_Gem_018_x1);
 
-  StackBrush.DrawRectangle(rect);
-  bgTex.Draw(rect.Left, rect.Top, rect.Width, rect.Height);
-  tex.Draw(rect.Left, rect.Top, rect.Width, rect.Height);
-  StackCountDecorator.Paint(x, y, w, h, HorizontalAlign.Center);
+        StackBrush.DrawRectangle(rect);
+        bgTex.Draw(rect.Left, rect.Top, rect.Width, rect.Height);
+        tex.Draw(rect.Left, rect.Top, rect.Width, rect.Height);
+        StackCountDecorator.Paint(x, y, w, h, HorizontalAlign.Center);
 }
 
 public void PaintTopInGame(ClipState clipState)
